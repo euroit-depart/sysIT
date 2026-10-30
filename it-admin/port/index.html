@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADRIAN VOSS — Web Developer · Software Engineer · Automation Engineer</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000'/%3E%3Ctext x='16' y='23' font-family='Arial Black' font-size='20' fill='%23ff3131' text-anchor='middle'%3EV%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+@property --acc{syntax:'<color>';inherits:true;initial-value:#ff3131;}
+
+:root{
+  --bg:#070707; --panel:#0d0d0d; --panel2:#0a0a0a;
+  --line:rgba(255,255,255,.13); --line2:rgba(255,255,255,.3);
+  --white:#fff; --body:#c9c7c0; --dim:#8a8880;
+  --red:#ff3131; --yellow:#e8ff2e; --blue:#2f6dff;
+  --disp:'Anton',sans-serif; --grot:'Space Grotesk',sans-serif; --mono:'JetBrains Mono',monospace;
+  --on-acc:#000;
+}
+body[data-theme="red"]{--acc:var(--red)}
+body[data-theme="yellow"]{--acc:var(--yellow)}
+body[data-theme="blue"]{--acc:var(--blue);--on-acc:#fff}
+body{transition:--acc .7s ease}
+
+/* fixed discipline identities */
+.u-web{--uac:var(--red);--uon:#000}
+.u-soft{--uac:var(--blue);--uon:#fff}
+.u-auto{--uac:var(--yellow);--uon:#000}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{overflow-x:hidden}
+body{background:var(--bg);color:var(--body);font:16px/1.6 var(--grot);-webkit-font-smoothing:antialiased}
+body.lock{overflow:hidden}
+::selection{background:var(--acc);color:var(--on-acc)}
+::-webkit-scrollbar{width:9px}
+::-webkit-scrollbar-track{background:#0a0a0a}
+::-webkit-scrollbar-thumb{background:#242424;border:2px solid #0a0a0a}
+::-webkit-scrollbar-thumb:hover{background:var(--acc)}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;background:none;border:0;color:inherit}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:1px solid var(--acc);outline-offset:3px}
+section{scroll-margin-top:78px}
+.wrap{max-width:1340px;margin:0 auto;padding:0 clamp(20px,4vw,52px)}
+.mono{font-family:var(--mono)}
+
+@media (hover:hover) and (pointer:fine){
+  body,a,button,input,label,select,textarea{cursor:none}
+  input[type=email],input[type=text],textarea{cursor:text}
+}
+
+/* ============ FILM GRAIN ============ */
+#grain{position:fixed;inset:-60%;width:220%;height:220%;z-index:9990;pointer-events:none;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 7s steps(10) infinite}
+@keyframes grain{
+  0%,100%{transform:translate(0,0)}10%{transform:translate(-4%,-7%)}20%{transform:translate(-11%,3%)}
+  30%{transform:translate(6%,-9%)}40%{transform:translate(-4%,11%)}50%{transform:translate(-9%,4%)}
+  60%{transform:translate(11%,0)}70%{transform:translate(0,9%)}80%{transform:translate(-11%,0)}90%{transform:translate(8%,4%)}}
+
+/* ============ CURSOR ============ */
+#cursor{position:fixed;left:0;top:0;z-index:10001;pointer-events:none;width:8px;height:8px;margin:-4px 0 0 -4px;
+  background:#fff;display:flex;align-items:center;justify-content:center;
+  transition:width .22s,height .22s,margin .22s,background .22s,border .22s}
+#cursor.link{width:36px;height:36px;margin:-18px 0 0 -18px;background:transparent;border:1px solid var(--acc)}
+#cursor.label{width:64px;height:64px;margin:-32px 0 0 -32px;background:var(--acc);border:0}
+#cursorLabel{font:700 10px var(--mono);letter-spacing:.14em;color:var(--on-acc);opacity:0;transition:opacity .2s}
+#cursor.label #cursorLabel{opacity:1}
+@media (hover:none),(pointer:coarse){#cursor{display:none}}
+
+/* ============ PROGRESS / LOADER ============ */
+#progressBar{position:fixed;top:0;left:0;height:3px;width:0;background:var(--acc);z-index:1002}
+#leader{position:fixed;inset:0;z-index:10000;background:#050505;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:transform .6s cubic-bezier(.7,0,.3,1)}
+#leader.go{transform:translateY(-101%)}
+#leader .ring{position:absolute;width:280px;height:280px;border:1px solid rgba(255,255,255,.3);border-radius:50%}
+#leader .sweep{position:absolute;left:50%;top:50%;width:140px;height:1px;background:rgba(255,255,255,.45);transform-origin:0 50%;animation:spin 1.15s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#leader .xv{position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(255,255,255,.1)}
+#leader .xhh{position:absolute;top:50%;left:0;right:0;height:1px;background:rgba(255,255,255,.1)}
+#leadNum{font:400 clamp(90px,18vh,150px)/1 var(--disp);color:#fff;position:relative;z-index:2}
+#leadNum.pop{animation:pop .5s cubic-bezier(.2,.9,.3,1.4)}
+@keyframes pop{from{transform:scale(1.35);opacity:.2}to{transform:scale(1);opacity:1}}
+#leadTag{position:absolute;bottom:44px;left:50%;transform:translateX(-50%);font:500 11px var(--mono);letter-spacing:.3em;color:var(--dim);white-space:nowrap}
+#leadSkip{position:absolute;top:30px;right:34px;font:400 10px var(--mono);letter-spacing:.2em;color:#555}
+
+/* ============ NAV ============ */
+#nav{position:fixed;top:0;left:0;right:0;z-index:900;height:64px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(20px,4vw,48px);border-bottom:1px solid var(--line);transition:background .3s,backdrop-filter .3s}
+#nav.scrolled{background:rgba(7,7,7,.86);backdrop-filter:blur(10px)}
+.logo{font:700 13px var(--mono);letter-spacing:.12em;color:#fff}
+.logo span{color:var(--acc)}
+#nav .links{display:flex;gap:28px}
+#nav .links a{font:500 11px var(--mono);letter-spacing:.16em;color:#8d8b84;padding:4px 0;border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
+#nav .links a:hover{color:#fff}
+#nav .links a.act{color:#fff;border-color:var(--acc)}
+.nav-right{display:flex;gap:18px;align-items:center;font:400 11px var(--mono);letter-spacing:.1em;color:var(--dim)}
+.nav-right .avail{color:var(--acc)}
+.nav-cta{border:1px solid var(--acc);color:var(--acc);font:700 10px var(--mono);letter-spacing:.14em;padding:9px 13px;transition:.2s}
+.nav-cta:hover{background:var(--acc);color:var(--on-acc)}
+@media(max-width:980px){#nav .links{display:none}.nav-right .avail,#clock{display:none}}
+
+/* ============ REVEAL ============ */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.22,.68,.26,1)}
+.rv.on{opacity:1;transform:none}
+
+/* ============ HERO ============ */
+#hero{padding-top:128px}
+.hud{display:flex;justify-content:space-between;gap:14px;font:500 10px var(--mono);letter-spacing:.22em;color:#777;flex-wrap:wrap}
+.hud .rec i{display:inline-block;width:8px;height:8px;background:var(--acc);margin-right:8px;animation:blink 1.3s steps(2) infinite;vertical-align:1px}
+@keyframes blink{50%{opacity:.15}}
+.hud b{color:#fff;font-weight:700}
+#hero h1{margin:34px 0 30px}
+.hl{display:block;text-align:left;background:none;border:0;padding:0;
+  font:400 clamp(2.3rem,7.3vw,6.3rem)/1.06 var(--disp);text-transform:uppercase;letter-spacing:.005em;
+  color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.5);
+  transition:color .35s,-webkit-text-stroke-color .35s,transform .25s}
+.hl:hover{transform:translateX(10px);-webkit-text-stroke-color:#fff}
+.hl.act{color:var(--acc);-webkit-text-stroke-color:transparent}
+@supports not (-webkit-text-stroke:1px #fff){.hl{color:rgba(255,255,255,.4)}.hl.act{color:var(--acc)}}
+.hl-u{display:block;font:700 11px var(--mono);letter-spacing:.24em;color:#6f6d66;margin-bottom:2px;-webkit-text-stroke-width:0;transition:color .3s}
+.hl.act .hl-u{color:var(--acc)}
+.hero-row{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:start}
+.hero-row p.lead{max-width:54ch;font-size:17px;color:var(--body)}
+.cta-row{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap}
+.btn-a,.btn-b{display:inline-flex;align-items:center;gap:10px;font:700 12px var(--mono);letter-spacing:.12em;padding:15px 24px;border:1px solid var(--acc);transition:transform .18s,box-shadow .18s,background .18s,color .18s}
+.btn-a{background:var(--acc);color:var(--on-acc)}
+.btn-a:hover{transform:translate(-3px,-3px);box-shadow:5px 5px 0 rgba(255,255,255,.92)}
+.btn-b{border-color:var(--line2);color:#fff}
+.btn-b:hover{border-color:var(--acc);color:var(--acc)}
+.btn-a svg,.btn-b svg{width:13px;height:13px}
+.slate{border:1px solid var(--line);background:var(--panel)}
+.slate .clap{height:24px;background:repeating-linear-gradient(-45deg,#e9e7df 0 13px,#141414 13px 26px)}
+.slate .sl-body{padding:20px 22px 14px}
+.slate .sl-row{display:flex;justify-content:space-between;gap:16px;padding:7px 0;border-bottom:1px dashed rgba(255,255,255,.1);font:400 11px var(--mono);letter-spacing:.06em}
+.slate .sl-row:last-child{border:0}
+.slate .sl-row b{color:#777;font-weight:500;letter-spacing:.18em}
+.slate .sl-row span{color:#fff;text-align:right}
+@media(max-width:960px){.hero-row{grid-template-columns:1fr}}
+
+.featured{margin-top:60px;border:1px solid var(--line)}
+.cvwrap{position:relative;aspect-ratio:16/9;background:#050505;overflow:hidden}
+.featured .cvwrap{border-bottom:1px solid var(--line)}
+.cvwrap canvas{width:100%;height:100%;display:block}
+.cv-tag{position:absolute;font:500 10px var(--mono);letter-spacing:.18em;background:rgba(0,0,0,.85);border:1px solid var(--line);padding:5px 10px;color:#ddd;transition:background .25s,color .25s,border-color .25s}
+.cv-tl{top:12px;left:12px}.cv-tr{top:12px;right:12px}.cv-br{bottom:12px;right:12px}
+.cvwrap:hover .cv-tag{border-color:var(--acc);color:#fff}
+.pvline{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.12)}
+.pvline i{display:block;height:100%;background:var(--acc);transform:scaleX(0);transform-origin:left}
+.featured:hover .pvline i{animation:pv 9s linear infinite}
+@keyframes pv{to{transform:scaleX(1)}}
+.play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:88px;height:88px;border:1px solid rgba(255,255,255,.75);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.4);transition:.25s;pointer-events:none}
+.play svg{width:26px;height:26px;fill:#fff;margin-left:4px}
+.featured:hover .play{background:var(--acc);border-color:var(--acc);transform:translate(-50%,-50%) scale(1.07)}
+.featured:hover .play svg{fill:var(--on-acc)}
+.featured-meta{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:14px 18px;font:500 11px var(--mono);letter-spacing:.14em;color:var(--dim)}
+.featured-meta b{color:#fff;font-weight:700}
+
+.stats{display:flex;margin-top:56px;border-block:1px solid var(--line)}
+.stats>div{flex:1;padding:24px 28px;border-left:1px solid var(--line)}
+.stats>div:first-child{border-left:0}
+.stats b{display:block;font:400 clamp(2rem,3.6vw,3rem)/1 var(--disp);color:#fff}
+.stats span{font:500 10px var(--mono);letter-spacing:.18em;color:var(--dim)}
+@media(max-width:760px){.stats{flex-wrap:wrap}.stats>div{flex:1 1 50%;border-top:1px solid var(--line)}.stats>div:nth-child(-n+2){border-top:0}.stats>div:nth-child(odd){border-left:0}}
+
+/* ============ MARQUEE ============ */
+.mq{overflow:hidden;background:var(--acc);border-block:1px solid var(--line)}
+.mq-track{display:flex;width:max-content;will-change:transform;animation:mq 26s linear infinite}
+.mq-track span{padding:13px 0;font:700 13px var(--mono);letter-spacing:.22em;color:var(--on-acc);white-space:nowrap}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* ============ SECTIONS ============ */
+.sec{padding:112px 0 96px;border-top:1px solid var(--line)}
+.kick{display:flex;align-items:center;gap:16px;font:500 11px var(--mono);letter-spacing:.24em;color:var(--dim)}
+.kick .sc{color:var(--acc)}
+.kick .kr{flex:1;height:1px;background:var(--line)}
+.shead h2{margin-top:26px;font:400 clamp(2.5rem,5.6vw,4.5rem)/1.02 var(--disp);color:#fff;text-transform:uppercase;letter-spacing:.005em}
+.shead h2 em{font-style:normal;color:var(--acc)}
+.sdesc{margin-top:18px;max-width:62ch;color:var(--body)}
+
+/* ============ UNITS ============ */
+.units-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:52px}
+.unit{border:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;transition:border-color .25s,transform .25s}
+.unit:hover{border-color:var(--uac);transform:translateY(-4px)}
+.u-top{padding:18px 20px 14px}
+.u-num{font:700 10px var(--mono);letter-spacing:.22em;color:var(--uac)}
+.u-name{margin-top:6px;font:400 23px/1.1 var(--disp);color:#fff;text-transform:uppercase}
+.u-tag{margin-top:5px;font:400 13px var(--grot);color:#8d8b84;font-style:italic}
+.unit .cvwrap{border-block:1px solid var(--line)}
+.u-body{padding:16px 20px 20px;flex:1}
+.u-cap{list-style:none}
+.u-cap li{position:relative;padding:7px 0 7px 20px;font-size:13.5px;line-height:1.5;color:var(--body);border-top:1px dashed rgba(255,255,255,.08)}
+.u-cap li:first-child{border-top:0}
+.u-cap li::before{content:'▸';position:absolute;left:0;top:8px;color:var(--uac);font-size:11px}
+.u-tools{margin-top:14px;font:500 10px var(--mono);letter-spacing:.14em;color:#8d8b84}
+.u-foot{margin-top:auto;padding:16px 20px;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.u-stat{font:700 10px var(--mono);letter-spacing:.14em;color:#fff}
+.u-view{font:700 10px var(--mono);letter-spacing:.14em;color:#fff;border:1px solid var(--line2);padding:11px 14px;transition:.2s}
+.u-view:hover{border-color:var(--uac);color:var(--uac)}
+.u-brief{margin-left:auto;background:var(--uac);color:var(--uon);font:700 10px var(--mono);letter-spacing:.14em;padding:12px 14px;transition:transform .18s,box-shadow .18s}
+.u-brief:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 rgba(255,255,255,.92)}
+@media(max-width:1020px){.units-grid{grid-template-columns:1fr}}
+
+/* ============ LIBRARY ============ */
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:44px 0 26px}
+.fbtn{font:700 11px var(--mono);letter-spacing:.14em;padding:11px 17px;border:1px solid var(--line);color:#a09e97;transition:.2s}
+.fbtn:hover{border-color:var(--acc);color:#fff}
+.fbtn.act{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
+#libCount{margin-left:auto;font:500 11px var(--mono);letter-spacing:.18em;color:var(--dim)}
+@media(max-width:760px){#libCount{flex-basis:100%;margin:8px 0 0}}
+.lib-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:22px;grid-auto-flow:dense}
+.card{grid-column:span 12;background:var(--panel);border:1px solid var(--line);transition:border-color .25s}
+.card:hover{border-color:var(--acc)}
+.card.hide{display:none}
+@media(min-width:860px){.s7{grid-column:span 7}.s5{grid-column:span 5}.s8{grid-column:span 8}.s4{grid-column:span 4}}
+.card .cvwrap{cursor:none}
+.card .cv-tl{background:var(--acc);border-color:var(--acc);color:var(--on-acc);opacity:0;transform:translateY(-4px);transition:.25s}
+.card:hover .cv-tl{opacity:1;transform:none}
+.card-body{padding:20px 22px 22px}
+.u-chip,.n-tag{font:700 9px var(--mono);letter-spacing:.16em;border:1px solid;padding:3px 7px;display:inline-block}
+.t-web{color:var(--red);border-color:rgba(255,49,49,.45)}
+.t-soft{color:var(--blue);border-color:rgba(47,109,255,.55)}
+.t-auto{color:var(--yellow);border-color:rgba(232,255,46,.4)}
+.card .u-chip{margin-bottom:10px}
+.card-meta{font:500 10px var(--mono);letter-spacing:.16em;color:var(--dim)}
+.card h3{margin:10px 0 8px;font:400 26px/1.05 var(--disp);letter-spacing:.01em;color:#fff;text-transform:uppercase;transition:color .25s}
+.card:hover h3{color:var(--acc)}
+.card p{font-size:14.5px;color:var(--body)}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.tags span{font:500 10px var(--mono);letter-spacing:.1em;color:#8d8b84;border:1px solid var(--line);padding:3px 8px}
+.cnote-btn{margin-top:16px;font:700 10px var(--mono);letter-spacing:.18em;color:var(--acc);padding:0;transition:opacity .2s}
+.cnote-btn:hover{opacity:.7}
+.cnote{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s ease}
+.cnote.open{grid-template-rows:1fr}
+.cnote>div{overflow:hidden}
+.cnote p{margin-top:12px;padding:12px 14px;border-left:2px solid var(--acc);background:var(--panel2);font:400 12.5px/1.6 var(--mono);color:#a5a39c}
+.archive{grid-column:1/-1;display:flex;align-items:center;gap:26px;padding:26px 28px;border:1px solid var(--line);transition:border-color .25s,background .25s}
+.archive:hover{border-color:var(--acc);background:var(--panel)}
+.archive .mono{font:500 10px var(--mono);letter-spacing:.2em;color:var(--acc)}
+.archive strong{font:400 clamp(1.1rem,2.4vw,1.7rem)/1.1 var(--disp);color:#fff;text-transform:uppercase;letter-spacing:.01em}
+.archive .arr{margin-left:auto;font-size:26px;color:var(--acc);transition:transform .25s}
+.archive:hover .arr{transform:translateX(8px)}
+@media(max-width:640px){.archive{flex-wrap:wrap;gap:10px}}
+
+/* ============ FILM STRIP ============ */
+.strip{margin:96px 0 0;border-block:1px solid var(--line);padding:16px 0}
+.holes{display:flex;justify-content:space-between;padding:0 12px;margin-bottom:14px}
+.holes:last-child{margin:14px 0 0}
+.holes i{width:15px;height:9px;background:#1d1d1d;border-radius:2px}
+.frames{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.frames figure{margin:0}
+.frames img{width:100%;aspect-ratio:3/2;object-fit:cover;border:1px solid var(--line);filter:grayscale(1) contrast(1.4) brightness(.82);transition:filter .45s}
+.frames img:hover{filter:grayscale(.1) contrast(1.12) brightness(.98)}
+.frames figcaption{margin-top:9px;font:500 10px var(--mono);letter-spacing:.16em;color:var(--dim)}
+@media(max-width:760px){.frames{grid-template-columns:repeat(2,1fr)}}
+
+/* ============ FIELD NOTES ============ */
+.note{display:grid;grid-template-columns:118px minmax(0,1fr) auto;gap:30px;align-items:center;padding:32px 8px;border-top:1px solid var(--line);transition:background .25s}
+.note:last-of-type{border-bottom:1px solid var(--line)}
+.note:hover{background:var(--panel2)}
+.n-left{display:flex;flex-direction:column;gap:9px;align-items:flex-start}
+.n-idx{font:700 12px var(--mono);letter-spacing:.14em;color:var(--dim);transition:color .25s}
+.note:hover .n-idx{color:var(--acc)}
+.note h3{font:400 clamp(1.4rem,2.6vw,2rem)/1.08 var(--disp);color:#fff;text-transform:uppercase;transition:color .25s}
+.note:hover h3{color:var(--acc)}
+.note .n-deck{margin-top:8px;color:#a5a39c;font-size:15px;max-width:58ch}
+.n-side{text-align:right;font:500 10px var(--mono);letter-spacing:.16em;color:var(--dim);line-height:2.1}
+.n-open{display:inline-flex;align-items:center;gap:8px;font:700 11px var(--mono);letter-spacing:.14em;color:#fff;border:1px solid var(--line2);padding:12px 18px;margin-top:10px;transition:.2s}
+.n-open svg{width:12px;height:12px;transition:transform .25s}
+.note:hover .n-open{border-color:var(--acc);background:var(--acc);color:var(--on-acc)}
+.note:hover .n-open svg{transform:translateX(4px)}
+@media(max-width:820px){.note{grid-template-columns:1fr;gap:12px}.n-side{text-align:left}}
+
+/* ============ READER OVERLAY ============ */
+#reader{position:fixed;inset:0;z-index:950;background:var(--bg);overflow-y:auto;display:none}
+#reader.open{display:block}
+.reader-top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:24px;padding:15px clamp(20px,4vw,52px);
+  background:rgba(7,7,7,.92);backdrop-filter:blur(9px);border-bottom:1px solid var(--line);font:500 11px var(--mono);letter-spacing:.16em;color:var(--dim)}
+.rprog{flex:1;height:2px;background:#222}
+.rprog i{display:block;height:100%;width:0;background:var(--acc)}
+#compPct{color:var(--acc);min-width:44px;text-align:right}
+#readerClose{display:inline-flex;align-items:center;gap:8px;font:700 11px var(--mono);letter-spacing:.14em;color:#fff;border:1px solid var(--line2);padding:9px 14px;transition:.2s}
+#readerClose:hover{border-color:var(--acc);color:var(--acc)}
+#readerClose svg{width:12px;height:12px}
+.reader-grid{max-width:1220px;margin:0 auto;padding:64px clamp(20px,4vw,52px) 120px;display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:64px;align-items:start}
+article.art{max-width:660px}
+.art .lede{font-size:19px;line-height:1.7;color:#e8e6df}
+.art .lede::first-letter{font:400 3.2em/0.8 var(--disp);color:var(--acc);float:left;padding:8px 12px 0 0}
+.art h2{margin:2.4em 0 .8em;font:400 26px/1.1 var(--disp);color:#fff;text-transform:uppercase;letter-spacing:.02em}
+.art h2::before{content:attr(data-i);color:var(--acc);margin-right:14px;font-size:.72em}
+.art p{margin:1.1em 0;font-size:16.5px;line-height:1.78}
+.art blockquote{margin:2.2em 0;padding-left:22px;border-left:4px solid var(--acc);font:400 clamp(1.4rem,2.6vw,1.9rem)/1.2 var(--disp);color:#fff;text-transform:uppercase}
+.receipts{margin:2.2em 0;border:1px solid var(--line);padding:20px 22px;background:var(--panel)}
+.receipts .rline{display:flex;align-items:baseline;gap:12px;padding:5px 0;font:500 12px var(--mono);letter-spacing:.08em;color:#a5a39c}
+.receipts .rline i{flex:1;border-bottom:1px dotted #3a3a3a;transform:translateY(-3px)}
+.receipts .rline b{color:var(--acc);font-weight:700}
+.companion{position:sticky;top:92px;border:1px solid var(--line);background:var(--panel)}
+.companion .cvwrap{border-bottom:1px solid var(--line)}
+.comp-in{padding:18px 20px 20px}
+.comp-lab{font:700 10px var(--mono);letter-spacing:.2em;color:var(--acc)}
+.cprog{height:3px;background:#222;margin:14px 0 4px}
+.cprog i{display:block;height:100%;width:0;background:var(--acc)}
+#chapterList{list-style:none;margin-top:14px}
+#chapterList li{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);font:500 11px var(--mono);letter-spacing:.14em;color:#7d7b74;transition:color .2s}
+#chapterList li i{width:9px;height:9px;background:#333;flex:none;transition:background .2s}
+#chapterList li.on{color:#fff}
+#chapterList li.on i{background:var(--acc)}
+#chapterList li:hover{color:#fff}
+#compMeta{margin-top:16px;font:500 10px var(--mono);letter-spacing:.16em;color:var(--dim)}
+@media(max-width:980px){.reader-grid{grid-template-columns:1fr}.companion{position:static;order:-1}}
+
+/* ============ STACK ============ */
+.stack-grid{display:grid;grid-template-columns:400px minmax(0,1fr);gap:70px;align-items:start;margin-top:52px}
+.stack-left{position:sticky;top:96px}
+.big-amt{font:400 clamp(3.6rem,7vw,5.4rem)/1 var(--disp);color:#fff}
+.big-amt small{font:500 13px var(--mono);letter-spacing:.2em;color:var(--acc);margin-left:10px}
+.budget-scale{display:flex;justify-content:space-between;font:500 10px var(--mono);letter-spacing:.12em;color:var(--dim);margin-top:8px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:#222;outline:none;margin-top:26px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;background:var(--acc);border:3px solid #000;box-shadow:0 0 0 1px var(--acc);cursor:none}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:0;background:var(--acc);border:3px solid #000;box-shadow:0 0 0 1px var(--acc);cursor:none}
+.meter{height:8px;background:#1a1a1a;margin-top:26px}
+.meter i{display:block;height:100%;width:0;background:var(--acc);transition:width .2s}
+#stackTotal{margin-top:12px;font:500 11px var(--mono);letter-spacing:.16em;color:var(--dim)}
+#stackTotal b{color:#fff}
+.verdict{margin-top:24px;padding-top:20px;border-top:1px solid var(--line);font-size:16px;color:#e0ded7}
+.verdict b{font:700 11px var(--mono);letter-spacing:.2em;color:var(--acc);display:block;margin-bottom:8px}
+.lrow{display:grid;grid-template-columns:44px minmax(0,1.55fr) 92px minmax(16px,1fr) 64px 112px;gap:14px;align-items:center;padding:15px 4px;border-top:1px solid var(--line);transition:opacity .3s}
+.lrow.lhead{padding:0 4px 12px;font:500 10px var(--mono);letter-spacing:.2em;color:#6b6963}
+.row:last-child{border-bottom:1px solid var(--line)}
+.row:hover{background:var(--panel2)}
+.row .rk{font:700 12px var(--mono);color:var(--acc)}
+.row.benched .rk{color:#4a4a4a}
+.row .nm b{display:block;font:700 16px var(--grot);color:#fff}
+.row .nm i{display:block;font:400 11px var(--mono);font-style:normal;color:#85837c;margin-top:3px}
+.row .tag{font:500 10px var(--mono);letter-spacing:.12em;color:#8d8b84;border:1px solid var(--line);padding:3px 8px;justify-self:start}
+.row .ld{border-bottom:1px dotted #3a3a3a;height:1px}
+.row .pr{font:700 14px var(--mono);color:var(--acc);text-align:right}
+.row.benched .pr{color:#555;text-decoration:line-through}
+.row .st{font:700 10px var(--mono);letter-spacing:.14em;color:var(--acc);text-align:right}
+.row.benched{opacity:.38}
+.row.benched .st{color:#666}
+@media(max-width:1020px){.stack-grid{grid-template-columns:1fr}.stack-left{position:static}}
+@media(max-width:720px){.lrow{grid-template-columns:34px minmax(0,1fr) 56px 84px}.row .tag,.row .ld,.lrow .h-tag,.lrow .h-ld{display:none}.row .nm i{display:none}}
+
+/* ============ WIRE ============ */
+.wire-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:72px;align-items:start;margin-top:8px}
+#wire h2{font:400 clamp(2.6rem,5.4vw,4.4rem)/1.02 var(--disp);color:#fff;text-transform:uppercase;margin-top:26px}
+#wire h2 em{font-style:normal;color:var(--acc)}
+#wire .wcopy{margin-top:20px;max-width:52ch}
+#subForm{display:flex;gap:12px;margin-top:32px;flex-wrap:wrap}
+#subInput{flex:1;min-width:220px;background:var(--panel);border:1px solid var(--line2);color:#fff;padding:15px 18px;font:400 13px var(--mono);letter-spacing:.04em;transition:border-color .2s}
+#subInput::placeholder{color:#6d6b64}
+#subInput:focus{outline:none;border-color:var(--acc)}
+#subInput.bad{border-color:var(--red);animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+#subErr{min-height:20px;margin-top:10px;font:500 11px var(--mono);letter-spacing:.1em;color:var(--red)}
+.wsmall{margin-top:6px;font:500 10px var(--mono);letter-spacing:.18em;color:var(--dim)}
+.sub-ok{border:1px solid var(--acc);color:var(--acc);font:700 12px var(--mono);letter-spacing:.14em;padding:18px 20px}
+.backstage{border:1px solid var(--line);background:var(--panel)}
+.bs-head{padding:15px 20px;border-bottom:1px solid var(--line);font:700 11px var(--mono);letter-spacing:.24em;color:var(--acc)}
+.cred{display:flex;align-items:baseline;gap:14px;padding:15px 20px;border-bottom:1px dashed rgba(255,255,255,.1)}
+.cred .role{font:700 12px var(--mono);letter-spacing:.1em;color:#fff;width:96px;flex:none}
+.cred i{flex:1;border-bottom:1px dotted #3a3a3a;transform:translateY(-4px)}
+.cred .perk{font:400 11px var(--mono);color:#8d8b84;text-align:right}
+.cred .pr{font:700 12px var(--mono);color:var(--acc)}
+.bs-foot{padding:18px 20px}
+.bs-foot .btn-a{width:100%;justify-content:center}
+@media(max-width:900px){.wire-grid{grid-template-columns:1fr;gap:44px}}
+
+/* ============ CALL SHEET / HIRE ============ */
+.hire-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:64px;align-items:start;margin-top:52px}
+.service{display:grid;grid-template-columns:auto 1fr auto;gap:22px;padding:24px 22px;border:1px solid var(--line);background:var(--panel);margin-bottom:16px;align-items:center;transition:border-color .25s,transform .25s}
+.service:hover{border-color:var(--uac);transform:translateX(6px)}
+.s-num{font:400 30px/1 var(--disp);color:var(--uac)}
+.service .s-main b{display:block;font:400 20px/1.1 var(--disp);color:#fff;text-transform:uppercase;letter-spacing:.01em}
+.service .s-main p{font-size:13.5px;color:var(--body);margin-top:5px;max-width:44ch}
+.s-tools{display:block;margin-top:9px;font:500 10px var(--mono);letter-spacing:.14em;color:#8d8b84}
+.s-side{display:flex;flex-direction:column;gap:10px;align-items:flex-end}
+.s-from{font:700 12px var(--mono);letter-spacing:.08em;color:var(--uac)}
+.s-cta{border:1px solid var(--uac);color:#fff;font:700 10px var(--mono);letter-spacing:.14em;padding:11px 14px;transition:.2s}
+.s-cta:hover{background:var(--uac);color:var(--uon)}
+@media(max-width:860px){.service{grid-template-columns:auto 1fr}.s-side{grid-column:1/-1;flex-direction:row;justify-content:space-between;align-items:center}}
+.callsheet{border:1px solid var(--line);background:var(--panel)}
+.cs-head{padding:14px 20px;border-bottom:1px solid var(--line);font:700 11px var(--mono);letter-spacing:.22em;color:var(--acc)}
+.cs-row{display:flex;justify-content:space-between;gap:14px;padding:13px 20px;border-bottom:1px dashed rgba(255,255,255,.1);font:400 11px var(--mono);letter-spacing:.06em}
+.cs-row b{color:#777;font-weight:500;letter-spacing:.18em}
+.cs-row span{color:#fff;text-align:right}
+.cs-foot{padding:18px 20px}
+.cs-foot .btn-b{width:100%;justify-content:center}
+@media(max-width:980px){.hire-grid{grid-template-columns:1fr;gap:44px}}
+
+/* ============ BRIEF MODAL ============ */
+#brief{position:fixed;inset:0;z-index:960;display:none;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+#brief.open{display:flex}
+.b-back{position:absolute;inset:0;background:rgba(0,0,0,.74);backdrop-filter:blur(6px)}
+.b-card{position:relative;width:min(540px,100%);background:var(--panel);border:1px solid var(--line2);animation:tin .35s cubic-bezier(.2,.9,.3,1.1)}
+.b-card .clap{height:20px;background:repeating-linear-gradient(-45deg,#e9e7df 0 12px,#141414 12px 24px)}
+.b-head{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line);font:700 11px var(--mono);letter-spacing:.2em;color:var(--acc)}
+#briefClose{display:inline-flex;align-items:center;gap:8px;font:700 10px var(--mono);letter-spacing:.14em;color:#fff;border:1px solid var(--line2);padding:8px 12px;transition:.2s}
+#briefClose:hover{border-color:var(--acc);color:var(--acc)}
+#briefClose svg{width:11px;height:11px}
+#briefForm{padding:20px;display:grid;gap:14px}
+#briefForm label,.b-lab{font:700 10px var(--mono);letter-spacing:.18em;color:#777;display:grid;gap:7px}
+#briefForm input,#briefForm select,#briefForm textarea{width:100%;background:var(--panel2);border:1px solid var(--line2);color:#fff;padding:12px 14px;font:400 13px var(--mono);letter-spacing:.04em;transition:border-color .2s}
+#briefForm input:focus,#briefForm select:focus,#briefForm textarea:focus{outline:none;border-color:var(--acc)}
+#briefForm input.bad,#briefForm textarea.bad{border-color:var(--red);animation:shake .35s}
+#briefForm textarea{resize:vertical}
+.b-chips{display:flex;gap:10px;flex-wrap:wrap}
+.b-chip{font:700 10px var(--mono);letter-spacing:.12em;padding:11px 14px;border:1px solid rgba(255,255,255,.25);color:#a09e97;transition:.2s}
+.b-chip[data-unit="web"]{--c:var(--red);--on:#000}
+.b-chip[data-unit="soft"]{--c:var(--blue);--on:#fff}
+.b-chip[data-unit="auto"]{--c:var(--yellow);--on:#000}
+.b-chip.sel{background:var(--c);border-color:var(--c);color:var(--on)}
+#bErr{min-height:18px;font:500 11px var(--mono);letter-spacing:.1em;color:var(--red)}
+.b-ok{border:1px solid var(--acc);color:var(--acc);font:700 12px/1.8 var(--mono);letter-spacing:.12em;padding:26px 20px;text-align:center}
+
+/* ============ FOOTER ============ */
+footer{border-top:1px solid var(--line);padding:88px 0 36px}
+.foot-big{font:400 clamp(2.8rem,9vw,7.4rem)/1 var(--disp);color:#fff;text-transform:uppercase}
+.foot-big em{font-style:normal;color:var(--acc)}
+.foot-row{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin-top:44px}
+.foot-row .btn-b svg{width:14px;height:14px}
+.soc{display:flex;gap:10px}
+.soc a{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid var(--line2);transition:.2s}
+.soc a svg{width:17px;height:17px;stroke:#c9c7c0;fill:none;stroke-width:2}
+.soc a svg.fill{fill:#c9c7c0;stroke:none}
+.soc a:hover{border-color:var(--acc)}
+.soc a:hover svg{stroke:var(--acc)}
+.soc a:hover svg.fill{fill:var(--acc)}
+#toTop{margin-left:auto;display:inline-flex;align-items:center;gap:10px;font:700 11px var(--mono);letter-spacing:.16em;color:#fff;border:1px solid var(--line2);padding:13px 18px;transition:.2s}
+#toTop:hover{border-color:var(--acc);color:var(--acc)}
+.foot-bottom{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:60px;padding-top:18px;border-top:1px solid var(--line);font:500 10px var(--mono);letter-spacing:.16em;color:#66645e}
+
+/* ============ TOASTS ============ */
+#toasts{position:fixed;left:22px;bottom:22px;z-index:9999;display:flex;flex-direction:column;gap:10px;max-width:min(420px,86vw)}
+.toast{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--acc);padding:13px 17px;font:500 12px/1.5 var(--mono);letter-spacing:.04em;color:#e0ded7;animation:tin .35s cubic-bezier(.2,.9,.3,1.1)}
+.toast.out{opacity:0;transform:translateX(-14px);transition:.3s}
+@keyframes tin{from{opacity:0;transform:translateY(12px)}}
+
+@media (prefers-reduced-motion:reduce){
+  #grain,.mq-track,#leader .sweep{animation:none}
+  html{scroll-behavior:auto}
+  .rv{transition:none;opacity:1;transform:none}
+}
+</style>
+</head>
+<body data-theme="red">
+
+<div id="grain"></div>
+<div id="cursor"><span id="cursorLabel">RUN</span></div>
+<div id="progressBar"></div>
+
+<!-- FILM LEADER COUNTDOWN -->
+<div id="leader">
+  <div class="xv"></div><div class="xhh"></div>
+  <div class="ring"></div><div class="sweep"></div>
+  <div id="leadNum">3</div>
+  <div id="leadTag">VOSS.STUDIO — UNITS 01·02·03 — PICTURE START</div>
+  <div id="leadSkip">CLICK TO SKIP</div>
+</div>
+
+<!-- Standalone boot countdown — self-contained, runs BEFORE the main script,
+     and carries its own failsafe so it can never trap the visitor. -->
+<script>
+(function(){
+  var leader=document.getElementById('leader');
+  if(!leader)return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){leader.remove();return;}
+  var done=false;
+  function finish(){
+    if(done)return;done=true;
+    var num=document.getElementById('leadNum'),tag=document.getElementById('leadTag');
+    if(tag)tag.textContent='SCENE 01 — TAKE 01';
+    if(num)num.textContent='';
+    leader.classList.add('go');
+    document.body.classList.remove('lock');
+    setTimeout(function(){if(leader.parentNode)leader.parentNode.removeChild(leader);},700);
+  }
+  document.body.classList.add('lock');
+  var n=3,num=document.getElementById('leadNum');
+  if(num){num.classList.remove('pop');void num.offsetWidth;num.classList.add('pop');}
+  var iv=setInterval(function(){
+    n--;
+    if(n>0&&num){num.textContent=n;num.classList.remove('pop');void num.offsetWidth;num.classList.add('pop');}
+    else finish();
+  },580);
+  leader.addEventListener('click',finish);
+  setTimeout(finish,4200); /* failsafe: the intro dies after 4.2s no matter what */
+})();
+</script>
+
+<nav id="nav">
+  <a class="logo" href="#hero">VOSS<span>//</span>STUDIO</a>
+  <div class="links">
+    <a href="#units">THE UNITS</a>
+    <a href="#library">LIBRARY</a>
+    <a href="#notes">FIELD NOTES</a>
+    <a href="#stack">THE STACK</a>
+    <a href="#hire">CALL SHEET</a>
+  </div>
+  <div class="nav-right">
+    <span id="clock">AMS --:--</span>
+    <span class="avail">● OPEN — Q3</span>
+    <button class="nav-cta" id="navBrief">START A BUILD</button>
+  </div>
+</nav>
+
+<main>
+<!-- ================= HERO ================= -->
+<header id="hero" data-scene="red" class="wrap">
+  <div class="hud rv">
+    <span class="rec"><i></i>REC <b id="tc">00:00:00:00</b></span>
+    <span>VOSS.STUDIO — THREE UNITS ⁄ 2025</span>
+    <span>SCENE 01 ⁄ LENS <b id="lensTag">U.01</b></span>
+  </div>
+
+  <h1 class="rv" id="heroTitle">
+    <button class="hl act" data-lens="web" data-cursor="LENS"><span class="hl-u">U.01 — THE STOREFRONT</span>WEB DEVELOPER</button>
+    <button class="hl" data-lens="soft" data-cursor="LENS"><span class="hl-u">U.02 — THE ENGINE ROOM</span>SOFTWARE ENGINEER</button>
+    <button class="hl" data-lens="auto" data-cursor="LENS"><span class="hl-u">U.03 — THE RIGGING CREW</span>AUTOMATION ENGINEER</button>
+  </h1>
+
+  <div class="hero-row">
+    <div class="rv" data-d="80">
+      <p class="lead">Three units, one operator. I design and ship web products, engineer the systems underneath them, and automate everything that ticks — then publish the autopsy: every benchmark, every bad call, every fix that held under load. <b style="color:#fff">Click a title</b> to switch units. Hover any thumbnail on this page; nothing here is a screenshot.</p>
+      <div class="cta-row">
+        <button class="btn-a" id="runFeat">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+          RUN THE LATEST BUILD
+        </button>
+        <button class="btn-b" id="heroBrief">START A BUILD
+          <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6l6 6-6 6" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <aside class="slate rv" data-d="160">
+      <div class="clap"></div>
+      <div class="sl-body">
+        <div class="sl-row"><b>PRODUCTION</b><span>ADRIAN VOSS</span></div>
+        <div class="sl-row"><b>UNIT</b><span id="slateUnit">01 — WEB</span></div>
+        <div class="sl-row"><b>TAKE</b><span>∞ (STILL SHIPPING)</span></div>
+        <div class="sl-row"><b>FORMAT</b><span id="slateFmt">TS ⁄ REACT ⁄ CSS</span></div>
+        <div class="sl-row"><b>DIRECTOR</b><span>THE GUY WHO PAGES HIMSELF</span></div>
+      </div>
+    </aside>
+  </div>
+
+  <figure class="featured rv" id="featWrap" data-cursor="RUN" data-d="120" style="margin:0">
+    <div class="cvwrap" data-live>
+      <canvas class="sim" id="featCv" data-anim="layout"></canvas>
+      <span class="cv-tag cv-tl" id="featName">LATEST BUILD — PAPERTRAIL</span>
+      <span class="cv-tag cv-tr" id="featUnit">UNIT 01 ⁄ WEB ⁄ 11 MIN</span>
+      <span class="cv-tag" style="left:12px;bottom:12px">LIVE SIMULATION — HOVER TO RUN</span>
+      <div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+      <div class="pvline"><i></i></div>
+    </div>
+    <figcaption class="featured-meta">
+      <span id="featM1"><b>PAPERTRAIL</b> — PUBLISHING PLATFORM ⁄ 98 LIGHTHOUSE</span>
+      <span id="featM2">EDGE-RENDERED ⁄ DESIGN SYSTEM INSIDE</span>
+    </figcaption>
+  </figure>
+
+  <div class="stats rv" data-d="100">
+    <div><b>18</b><span>WEB BUILDS SHIPPED</span></div>
+    <div><b>21</b><span>SYSTEMS IN PRODUCTION</span></div>
+    <div><b>400+</b><span>CRON JOBS RETIRED</span></div>
+    <div><b>87s</b><span>COMMIT → PROD</span></div>
+  </div>
+</header>
+
+<!-- ================= MARQUEE ================= -->
+<div class="mq" aria-hidden="true">
+  <div class="mq-track">
+    <span>WEB APPS ⁄⁄ DESIGN SYSTEMS ⁄⁄ CORE WEB VITALS ⁄⁄ APIS ⁄⁄ POSTGRES ⁄⁄ RUST ⁄⁄ GO ⁄⁄ CI/CD ⁄⁄ RELEASE ENGINEERING ⁄⁄ WEBHOOK FABRICS ⁄⁄ RPA ⁄⁄ 87-SECOND DEPLOYS ⁄⁄&nbsp;</span>
+    <span>WEB APPS ⁄⁄ DESIGN SYSTEMS ⁄⁄ CORE WEB VITALS ⁄⁄ APIS ⁄⁄ POSTGRES ⁄⁄ RUST ⁄⁄ GO ⁄⁄ CI/CD ⁄⁄ RELEASE ENGINEERING ⁄⁄ WEBHOOK FABRICS ⁄⁄ RPA ⁄⁄ 87-SECOND DEPLOYS ⁄⁄&nbsp;</span>
+  </div>
+</div>
+
+<!-- ================= LIBRARY ================= -->
+<section id="library" data-scene="blue" class="sec">
+  <div class="wrap">
+    <header class="shead rv">
+      <div class="kick"><span class="sc">SCENE 02</span><span class="kr"></span><span>THE LIBRARY</span></div>
+      <h2>EVERY BUILD,<br><em>ON THE RECORD.</em></h2>
+      <p class="sdesc">Flagship deep-dives from all three units. Every thumbnail is a live canvas simulation of the actual system — hover to run. Filters reshuffle the grid in 300ms, the way a cut should.</p>
+    </header>
+
+    <div class="filters rv">
+      <button class="fbtn act" data-f="all">ALL 06</button>
+      <button class="fbtn" data-f="web">WEB 02</button>
+      <button class="fbtn" data-f="soft">SOFTWARE 02</button>
+      <button class="fbtn" data-f="auto">AUTOMATION 02</button>
+      <span id="libCount">SHOWING 06 ⁄ 06</span>
+    </div>
+
+    <div class="lib-grid" id="libGrid">
+
+      <article class="card s7 rv" data-cat="web" data-cursor="RUN">
+        <div class="cvwrap" data-live><canvas class="sim" data-anim="packets"></canvas><span class="cv-tag cv-tl">UNIT 01 — WEB</span></div>
+        <div class="card-body">
+          <span class="u-chip t-web">UNIT 01 · WEB</span>
+          <div class="card-meta">2025-11-02 ⁄ 14 MIN ⁄ 2.3K STARS</div>
+          <h3>FluxGrid</h3>
+          <p>Realtime ops dashboard rendering 50k events ⁄ min without dropping a frame — and the canvas renderer that made it possible.</p>
+          <div class="tags"><span>REACT</span><span>CANVAS</span><span>CLICKHOUSE</span></div>
+          <button class="cnote-btn">COMPANION NOTE +</button>
+          <div class="cnote"><div><p>The DOM grid died in week two; React now only touches what actually changed. Full latency receipts live in FN—01.</p></div></div>
+        </div>
+      </article>
+
+      <article class="card s5 rv" data-cat="auto" data-cursor="RUN" data-d="60">
+        <div class="cvwrap" data-live><canvas class="sim" data-anim="pipeline"></canvas><span class="cv-tag cv-tl">UNIT 03 — AUTOMATION</span></div>
+        <div class="card-body">
+          <span class="u-chip t-auto">UNIT 03 · AUTOMATION</span>
+          <div class="card-meta">2025-09-18 ⁄ 9 MIN ⁄ 1.1K STARS</div>
+          <h3>cronless</h3>
+          <p>Event-driven scheduler that replaced 400 cron jobs with one state machine — and zero 2am pages.</p>
+          <div class="tags"><span>GO</span><span>POSTGRES</span><span>QUEUE</span></div>
+          <button class="cnote-btn">COMPANION NOTE +</button>
+          <div class="cnote"><div><p>The whole scheduler is 600 lines of Go and one Postgres table. Boring on purpose — that's the feature.</p></div></div>
+        </div>
+      </article>
+
+      <article class="card s8 rv" data-cat="soft" data-cursor="RUN">
+        <div class="cvwrap" data-live><canvas class="sim" data-anim="mesh"></canvas><span class="cv-tag cv-tl">UNIT 02 — SOFTWARE</span></div>
+        <div class="card-body">
+          <span class="u-chip t-soft">UNIT 02 · SOFTWARE</span>
+          <div class="card-meta">2024-11-30 ⁄ 10 MIN ⁄ 780 STARS</div>
+          <h3>mesh-router</h3>
+          <p>Edge request routing in 300 lines of Rust — 40M requests a day for a project nobody visits.</p>
+          <div class="tags"><span>RUST</span><span>EDGE</span><span>HTTP</span></div>
+          <button class="cnote-btn">COMPANION NOTE +</button>
+          <div class="cnote"><div><p>No runtime dependencies. It routes, it logs, it sleeps. So do I.</p></div></div>
+        </div>
+      </article>
+
+      <article class="card s4 rv" data-cat="auto" data-cursor="RUN" data-d="60">
+        <div class="cvwrap" data-live><canvas class="sim" data-anim="term"></canvas><span class="cv-tag cv-tl">UNIT 03 — AUTOMATION</span></div>
+        <div class="card-body">
+          <span class="u-chip t-auto">UNIT 03 · AUTOMATION</span>
+          <div class="card-meta">2025-03-12 ⁄ 7 MIN ⁄ 620 STARS</div>
+          <h3>shipbot</h3>
+          <p>Release automation: commit to prod in 87 seconds, with receipts at every stage.</p>
+          <div class="tags"><span>CANARY</span><span>EDGE</span><span>API</span></div>
+          <button class="cnote-btn">COMPANION NOTE +</button>
+          <div class="cnote"><div><p>Deploys are boring now. That was the entire design brief.</p></div></div>
+        </div>
+      </article>
+
+      <article class="card s4 rv" data-cat="web" data-cursor="RUN">
+        <div class="cvwrap" data-live><canvas class="sim" data-anim="sort"></canvas><span class="cv-tag cv-tl">UNIT 01 — WEB</span></div>
+        <div class="card-body">
+          <span class="u-chip t-web">UNIT 01 · WEB</span>
+          <div class="card-meta">2025-01-25 ⁄ 8 MIN ⁄ 1.8K STARS</div>
+          <h3>The 40ms Build</h3>
+          <p>Latency-budget teardown of a heavy dashboard: 214ms to 38ms, itemized to the millisecond.</p>
+          <div class="tags"><span>SSR</span><span>WORKERS</span><span>CI</span></div>
+          <button class="cnote-btn">COMPANION NOTE +</button>
+          <div class="cnote"><div><p>The full ledger is FN—01 in Field Notes — the budget is now a CI check.</p></div></div>
+        </div>
+      </article>
+
+      <article class="card s8 rv" data-cat="soft" data-cursor="RUN" data-d="60">
+        <div class="cvwrap" data-live><canvas class="sim" data-anim="wave"></canvas><span class="cv-tag cv-tl">UNIT 02 — SOFTWARE</span></div>
+        <div class="card-body">
+          <span class="u-chip t-soft">UNIT 02 · SOFTWARE</span>
+          <div class="card-meta">2025-06-07 ⁄ 12 MIN ⁄ 940 STARS</div>
+          <h3>tapesql</h3>
+          <p>A query profiler that plays slow queries back like game film — at 1⁄10 speed, spikes and locks included.</p>
+          <div class="tags"><span>RUST</span><span>EXPLAIN</span><span>WAL</span></div>
+          <button class="cnote-btn">COMPANION NOTE +</button>
+          <div class="cnote"><div><p>Became the field note "Read Your Queries Like Game Film" — open it in Scene 04.</p></div></div>
+        </div>
+      </article>
+
+      <a class="archive rv" href="#" id="archiveLink">
+        <span class="mono">THE REST OF THE TAPES</span>
+        <strong>39 more builds live on GitHub — postmortems included</strong>
+        <span class="arr">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BTS FILM STRIP ================= -->
+<div class="strip rv wrap">
+  <div class="holes"></div>
+  <div class="frames">
+    <figure><img src="https://picsum.photos/seed/voss-bts-1/640/427.jpg" alt="Behind the scenes — the 3am commit"><figcaption>FIG.01 — THE 3AM COMMIT</figcaption></figure>
+    <figure><img src="https://picsum.photos/seed/voss-bts-2/640/427.jpg" alt="Behind the scenes — whiteboard autopsy"><figcaption>FIG.02 — WHITEBOARD AUTOPSY</figcaption></figure>
+    <figure><img src="https://picsum.photos/seed/voss-bts-3/640/427.jpg" alt="Behind the scenes — canary watch"><figcaption>FIG.03 — CANARY WATCH</figcaption></figure>
+    <figure><img src="https://picsum.photos/seed/voss-bts-4/640/427.jpg" alt="Behind the scenes — ship day"><figcaption>FIG.04 — SHIP DAY</figcaption></figure>
+  </div>
+  <div class="holes"></div>
+</div>
+
+<!-- ================= UNITS ================= -->
+<section id="units" data-scene="red" class="sec">
+  <div class="wrap">
+    <header class="shead rv">
+      <div class="kick"><span class="sc">SCENE 03</span><span class="kr"></span><span>THE UNITS — CAPABILITY SHEET</span></div>
+      <h2>ONE OPERATOR.<br><em>THREE UNITS.</em></h2>
+      <p class="sdesc">Every build in the library came out of one of three units. Hover a panel to run its discipline's live simulation, cut the library to its work, or brief the unit directly.</p>
+    </header>
+
+    <div class="units-grid">
+
+      <article class="unit u-web rv">
+        <div class="u-top">
+          <div class="u-num">UNIT 01</div>
+          <div class="u-name">Web Development</div>
+          <div class="u-tag">"Interfaces worth screenshotting."</div>
+        </div>
+        <div class="cvwrap" data-live data-cursor="RUN"><canvas class="sim" data-anim="layout"></canvas></div>
+        <div class="u-body">
+          <ul class="u-cap">
+            <li>Design-to-deploy: marketing sites to full products</li>
+            <li>Design systems &amp; component libraries that scale</li>
+            <li>Core Web Vitals budgets enforced in CI</li>
+            <li>WCAG-AA accessibility, keyboard-first</li>
+            <li>Edge-rendered; SSR only where it earns its keep</li>
+          </ul>
+          <div class="u-tools">TS ⁄ REACT ⁄ NEXT ⁄ CSS ⁄ NODE</div>
+        </div>
+        <div class="u-foot">
+          <span class="u-stat">18 SHIPS ⁄ 98 LH AVG</span>
+          <button class="u-view" data-u="web">VIEW WORK</button>
+          <button class="u-brief" data-unit="web">BRIEF U.01</button>
+        </div>
+      </article>
+
+      <article class="unit u-soft rv" data-d="60">
+        <div class="u-top">
+          <div class="u-num">UNIT 02</div>
+          <div class="u-name">Software Engineering</div>
+          <div class="u-tag">"The engine room, documented."</div>
+        </div>
+        <div class="cvwrap" data-live data-cursor="RUN"><canvas class="sim" data-anim="mesh"></canvas></div>
+        <div class="u-body">
+          <ul class="u-cap">
+            <li>APIs &amp; data layers sized for the load you'll actually get</li>
+            <li>Postgres schema design, tuning &amp; query forensics</li>
+            <li>CLIs &amp; devtooling your team will actually use</li>
+            <li>Performance autopsies: 214ms → 38ms, itemized</li>
+            <li>Code review as knowledge transfer, not gatekeeping</li>
+          </ul>
+          <div class="u-tools">RUST ⁄ GO ⁄ POSTGRES ⁄ REDIS</div>
+        </div>
+        <div class="u-foot">
+          <span class="u-stat">21 SYSTEMS ⁄ 40M REQ ⁄ DAY</span>
+          <button class="u-view" data-u="soft">VIEW WORK</button>
+          <button class="u-brief" data-unit="soft">BRIEF U.02</button>
+        </div>
+      </article>
+
+      <article class="unit u-auto rv" data-d="120">
+        <div class="u-top">
+          <div class="u-num">UNIT 03</div>
+          <div class="u-name">Automation Engineering</div>
+          <div class="u-tag">"If it ticks twice, it gets a pipeline."</div>
+        </div>
+        <div class="cvwrap" data-live data-cursor="RUN"><canvas class="sim" data-anim="flow"></canvas></div>
+        <div class="u-body">
+          <ul class="u-cap">
+            <li>CI/CD: commit → prod in 87 seconds, receipts included</li>
+            <li>Event-driven schedulers — 400 crons retired, zero pages</li>
+            <li>Webhook fabrics &amp; third-party integrations</li>
+            <li>Release engineering: canaries, rollbacks, runbooks</li>
+            <li>Internal tools that delete whole job postings</li>
+          </ul>
+          <div class="u-tools">GO ⁄ QUEUE ⁄ DOCKER ⁄ GH ACTIONS</div>
+        </div>
+        <div class="u-foot">
+          <span class="u-stat">400+ CRONS ⁄ 0 PAGES</span>
+          <button class="u-view" data-u="auto">VIEW WORK</button>
+          <button class="u-brief" data-unit="auto">BRIEF U.03</button>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= FIELD NOTES ================= -->
+<section id="notes" data-scene="yellow" class="sec">
+  <div class="wrap">
+    <header class="shead rv">
+      <div class="kick"><span class="sc">SCENE 04</span><span class="kr"></span><span>FIELD NOTES — LONG-FORM COMPANIONS</span></div>
+      <h2>READ THE<br><em>FULL AUTOPSY.</em></h2>
+      <p class="sdesc">Written companions — one from each unit. Open one and the visual scrubs along with your reading progress: the read-along, engineering edition.</p>
+    </header>
+
+    <div style="margin-top:52px">
+      <article class="note rv" data-note="0" role="button" tabindex="0" data-cursor="READ">
+        <div class="n-left"><span class="n-idx">FN—01</span><span class="n-tag t-web">UNIT 01 · WEB</span></div>
+        <div>
+          <h3>The 40 Millisecond Tax</h3>
+          <p class="n-deck">214ms to 38ms, itemized to the millisecond. Every cut, on the record.</p>
+          <button class="n-open">READ ALONG <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6l6 6-6 6" stroke="currentColor" fill="none" stroke-width="2"/></svg></button>
+        </div>
+        <div class="n-side">8 MIN READ<br>COMPANION: LATENCY LEDGER</div>
+      </article>
+
+      <article class="note rv" data-note="1" role="button" tabindex="0" data-cursor="READ" data-d="60">
+        <div class="n-left"><span class="n-idx">FN—02</span><span class="n-tag t-soft">UNIT 02 · SOFTWARE</span></div>
+        <div>
+          <h3>Read Your Queries Like Game Film</h3>
+          <p class="n-deck">EXPLAIN ANALYZE is a box score. Here's the projector.</p>
+          <button class="n-open">READ ALONG <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6l6 6-6 6" stroke="currentColor" fill="none" stroke-width="2"/></svg></button>
+        </div>
+        <div class="n-side">9 MIN READ<br>COMPANION: WAVEFORM</div>
+      </article>
+
+      <article class="note rv" data-note="2" role="button" tabindex="0" data-cursor="READ" data-d="120">
+        <div class="n-left"><span class="n-idx">FN—03</span><span class="n-tag t-auto">UNIT 03 · AUTOMATION</span></div>
+        <div>
+          <h3>Cron Is Where Ops Goes to Die</h3>
+          <p class="n-deck">400 cron jobs, one state machine, and the audit that killed them all.</p>
+          <button class="n-open">READ ALONG <svg viewBox="0 0 24 24"><path d="M5 12h14m-6-6l6 6-6 6" stroke="currentColor" fill="none" stroke-width="2"/></svg></button>
+        </div>
+        <div class="n-side">11 MIN READ<br>COMPANION: PIPELINE</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STACK ================= -->
+<section id="stack" data-scene="blue" class="sec">
+  <div class="wrap">
+    <header class="shead rv">
+      <div class="kick"><span class="sc">SCENE 05</span><span class="kr"></span><span>THE STACK — MONTHLY BUDGET</span></div>
+      <h2>WHAT I'D PAY FOR<br><em>AT $X ⁄ MO.</em></h2>
+      <p class="sdesc">The cross-unit toolbox. Drag the budget — the ledger re-cuts itself in real time. Benched tools stay visible so you can see exactly what you're missing.</p>
+    </header>
+
+    <div class="stack-grid">
+      <div class="stack-left rv">
+        <div class="big-amt"><span id="budgetVal">$60</span><small>⁄ MO BUDGET</small></div>
+        <input type="range" id="budget" min="0" max="150" step="5" value="60" aria-label="Monthly budget">
+        <div class="budget-scale"><span>$0</span><span>$75</span><span>$150</span></div>
+        <div class="meter"><i id="meterFill"></i></div>
+        <div id="stackTotal">USING <b>$0</b> OF <b>$60</b> — <b>$60</b> LEFT</div>
+        <div class="verdict"><b>VERDICT —</b><span id="verdictTxt">…</span></div>
+      </div>
+
+      <div class="rv" data-d="80">
+        <div class="lrow lhead">
+          <span>#</span><span>TOOL</span><span class="h-tag">CATEGORY</span><span class="h-ld"></span><span style="text-align:right">PRICE</span><span style="text-align:right">STATUS</span>
+        </div>
+        <div id="stackLedger"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= THE WIRE ================= -->
+<section id="wire" data-scene="red" class="sec">
+  <div class="wrap">
+    <div class="wire-grid">
+      <div class="rv">
+        <div class="kick"><span class="sc">SCENE 06</span><span class="kr"></span><span>THE WIRE — DISPATCH FROM ALL THREE UNITS</span></div>
+        <h2>ONE DEEP-DIVE.<br>EVERY OTHER FRIDAY.<br><em>NO GROWTH HACKS.</em></h2>
+        <p class="wcopy">Full postmortems from all three units — web, systems, automation — land in inboxes before they hit the site. Benchmarks, bad calls, receipts. Two emails a month, readable in one coffee, unsubscribable in one click.</p>
+        <form id="subForm" novalidate>
+          <input type="email" id="subInput" autocomplete="email" aria-label="Email address">
+          <button class="btn-a" type="submit">WIRE ME IN</button>
+        </form>
+        <div id="subErr"></div>
+        <div class="wsmall">4,218 ENGINEERS READ IT. ZERO "JUST CHECKING IN" EMAILS, EVER.</div>
+      </div>
+
+      <aside class="backstage rv" data-d="100">
+        <div class="bs-head">BACKSTAGE — CREDITS ROLL</div>
+        <div class="cred"><span class="role">BEST BOY</span><i></i><span class="perk">your name in the credits roll</span><span class="pr">$3</span></div>
+        <div class="cred"><span class="role">GRIP</span><i></i><span class="perk">monthly raw build postmortems</span><span class="pr">$9</span></div>
+        <div class="cred"><span class="role">PRODUCER</span><i></i><span class="perk">vote the next deep-dive</span><span class="pr">$25</span></div>
+        <div class="bs-foot">
+          <button class="btn-a" id="sponsorBtn">BACK THE STUDIO
+            <svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+          </button>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CALL SHEET / HIRE ================= -->
+<section id="hire" data-scene="yellow" class="sec">
+  <div class="wrap">
+    <header class="shead rv">
+      <div class="kick"><span class="sc">SCENE 07</span><span class="kr"></span><span>THE CALL SHEET — START A BUILD</span></div>
+      <h2>THREE UNITS.<br><em>ONE CALL SHEET.</em></h2>
+      <p class="sdesc">Hire a single unit or the whole crew. Fixed bids, weekly demos, everything on the record — same as the deep-dives.</p>
+    </header>
+
+    <div class="hire-grid">
+      <div class="rv">
+        <div class="service u-web">
+          <span class="s-num">01</span>
+          <div class="s-main">
+            <b>Web Development</b>
+            <p>Marketing sites → full products. Design-to-deploy with a 98-Lighthouse bar and a Vitals budget in CI.</p>
+            <span class="s-tools">NEXT ⁄ TS ⁄ HEADLESS CMS ⁄ DESIGN SYSTEMS</span>
+          </div>
+          <div class="s-side">
+            <span class="s-from">FROM $4.8K</span>
+            <button class="s-cta" data-unit="web">BRIEF UNIT 01</button>
+          </div>
+        </div>
+        <div class="service u-soft">
+          <span class="s-num">02</span>
+          <div class="s-main">
+            <b>Software Engineering</b>
+            <p>APIs, data layers, internal tools, performance forensics. Built for the load you'll actually get.</p>
+            <span class="s-tools">RUST ⁄ GO ⁄ POSTGRES ⁄ REDIS ⁄ PROFILING</span>
+          </div>
+          <div class="s-side">
+            <span class="s-from">FROM $6.5K</span>
+            <button class="s-cta" data-unit="soft">BRIEF UNIT 02</button>
+          </div>
+        </div>
+        <div class="service u-auto">
+          <span class="s-num">03</span>
+          <div class="s-main">
+            <b>Automation Engineering</b>
+            <p>Pipelines, integrations, release engineering, RPA. If your team does it twice manually, it's a bug.</p>
+            <span class="s-tools">CI/CD ⁄ WEBHOOKS ⁄ QUEUES ⁄ RUNBOOKS</span>
+          </div>
+          <div class="s-side">
+            <span class="s-from">FROM $3.2K</span>
+            <button class="s-cta" data-unit="auto">BRIEF UNIT 03</button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="callsheet rv" data-d="100">
+        <div class="cs-head">CALL SHEET — Nº 047</div>
+        <div class="cs-row"><b>CALL TIME</b><span>REPLIES &lt; 24H</span></div>
+        <div class="cs-row"><b>LOCATION</b><span>REMOTE — UTC+1, AMS</span></div>
+        <div class="cs-row"><b>GEAR</b><span>TS · RUST · GO · PG</span></div>
+        <div class="cs-row"><b>TERMS</b><span>FIXED BID — NO SURPRISES</span></div>
+        <div class="cs-row"><b>CATERING</b><span>COFFEE, ON ME</span></div>
+        <div class="cs-foot">
+          <a class="btn-b" href="mailto:hello@voss.studio">EMAIL INSTEAD — HELLO@VOSS.STUDIO</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="foot-big rv">THREE DISCIPLINES. <em>ONE CREW.</em></div>
+    <div class="foot-row rv">
+      <a class="btn-b" href="mailto:hello@voss.studio">
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 7l9 6 9-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        HELLO@VOSS.STUDIO
+      </a>
+      <button class="btn-b" id="copyMail">COPY ADDRESS</button>
+      <div class="soc">
+        <a href="#" data-toast="GitHub opens with the production deployment — this is the demo cut." aria-label="GitHub"><svg class="fill" viewBox="0 0 24 24"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.55v-2.02c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.66.41.36.78 1.06.78 2.14v3.17c0 .3.21.66.8.55A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg></a>
+        <a href="#" data-toast="RSS feed goes live with the production deployment." aria-label="RSS"><svg viewBox="0 0 24 24"><path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16" fill="none" stroke-width="2"/><circle cx="5" cy="19" r="1.6" fill="currentColor" stroke="none"/></svg></a>
+        <a href="mailto:hello@voss.studio" aria-label="Email"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3 7l9 6 9-6"/></svg></a>
+      </div>
+      <button id="toTop">BACK TO ONE
+        <svg viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M12 19V5m-6 6l6-6 6 6" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+      </button>
+    </div>
+    <div class="foot-bottom">
+      <span>© <span id="yr">2025</span> VOSS.STUDIO — UNITS 01·02·03, ALL ROLLS ORIGINAL</span>
+      <span>FIG.99 — THE EXIT SIGN</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ================= READER OVERLAY ================= -->
+<div id="reader">
+  <div class="reader-top">
+    <span id="rLabel">FN—01</span>
+    <div class="rprog"><i id="rFill"></i></div>
+    <span id="compPct">0%</span>
+    <button id="readerClose">ESC TO CLOSE
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2"/></svg>
+    </button>
+  </div>
+  <div class="reader-grid">
+    <article class="art" id="rArt"></article>
+    <aside class="companion">
+      <div class="cvwrap"><canvas class="sim" id="compCv"></canvas></div>
+      <div class="comp-in">
+        <div class="comp-lab">COMPANION VISUAL — SCRUBS AS YOU READ</div>
+        <div class="cprog"><i id="compFill"></i></div>
+        <ul id="chapterList"></ul>
+        <div id="compMeta"></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- ================= BRIEF MODAL ================= -->
+<div id="brief" role="dialog" aria-modal="true" aria-label="Start a build">
+  <div class="b-back"></div>
+  <div class="b-card">
+    <div class="clap"></div>
+    <div class="b-head">
+      <span>SLATE — NEW BUILD BRIEF</span>
+      <button id="briefClose">ESC <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2"/></svg></button>
+    </div>
+    <form id="briefForm" novalidate>
+      <label>NAME<input id="bName" type="text" autocomplete="name" placeholder="who's calling it in?"></label>
+      <label>EMAIL<input id="bMail" type="email" autocomplete="email" placeholder="where the reply lands"></label>
+      <div class="b-lab">UNIT
+        <div class="b-chips">
+          <button type="button" class="b-chip sel" data-unit="web">01 — WEB</button>
+          <button type="button" class="b-chip" data-unit="soft">02 — SOFTWARE</button>
+          <button type="button" class="b-chip" data-unit="auto">03 — AUTOMATION</button>
+        </div>
+      </div>
+      <label>BUDGET
+        <select id="bBudget">
+          <option>$2–5K</option>
+          <option selected>$5–10K</option>
+          <option>$10–25K</option>
+          <option>$25K+</option>
+        </select>
+      </label>
+      <label>THE BRIEF<textarea id="bMsg" rows="4" placeholder="what are we building? links help."></textarea></label>
+      <div id="bErr"></div>
+      <button class="btn-a" type="submit" style="justify-content:center">MARK THE SLATE</button>
+    </form>
+    <div id="bOk" class="b-ok" style="display:none;margin:20px"></div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+/* ================= HELPERS ================= */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const R=(a,b)=>a+Math.random()*(b-a);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+const MONO='"JetBrains Mono",monospace';
+let ACC=getComputedStyle(document.body).getPropertyValue('--acc').trim()||'#ff3131';
+
+function toast(msg){
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;
+  $('#toasts').appendChild(t);
+  setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),320)},3400);
+}
+
+/* ================= CANVAS ANIMATORS ================= */
+const ANIM={};
+
+/* -- 1. packet-flow node graph (FluxGrid / web) -- */
+ANIM.packets={
+  init(w,h){
+    const cols=clamp(Math.round(w/120),4,10), rows=clamp(Math.round(h/95),3,6);
+    const nodes=[];
+    for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)
+      nodes.push({x:(c+.5)/cols*w+R(-16,16),y:(r+.5)/rows*h+R(-12,12)});
+    const id=(c,r)=>r*cols+c, edges=[];
+    for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+      if(c<cols-1)edges.push([id(c,r),id(c+1,r)]);
+      if(r<rows-1)edges.push([id(c,r),id(c,r+1)]);
+      if(c<cols-1&&r<rows-1&&Math.random()<.55)edges.push([id(c,r),id(c+1,r+1)]);
+    }
+    const packets=Array.from({length:clamp(Math.round(w/34),5,26)},()=>({e:(Math.random()*edges.length)|0,t:Math.random(),sp:R(.45,1.05)}));
+    return{nodes,edges,packets};
+  },
+  base(st,ctx,acc){
+    ctx.strokeStyle='rgba(255,255,255,.13)';ctx.lineWidth=1;ctx.beginPath();
+    for(const[a,b]of st.edges){const A=st.nodes[a],B=st.nodes[b];ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);}
+    ctx.stroke();
+    st.nodes.forEach((n,i)=>{ctx.fillStyle=i%7===0?acc:'rgba(255,255,255,.6)';ctx.fillRect(n.x-2,n.y-2,4,4);});
+  },
+  frame(st,ctx,w,h,t,dt,p,acc){
+    ctx.clearRect(0,0,w,h);this.base(st,ctx,acc);
+    for(const pk of st.packets){
+      const[a,b]=st.edges[pk.e],A=st.nodes[a],B=st.nodes[b];
+      const dx=B.x-A.x,dy=B.y-A.y,L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L;
+      const x=A.x+(B.x-A.x)*pk.t,y=A.y+(B.y-A.y)*pk.t;
+      ctx.strokeStyle=acc;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x-ux*13,y-uy*13);ctx.lineTo(x,y);ctx.stroke();
+      ctx.fillStyle='#fff';ctx.fillRect(x-1.5,y-1.5,3,3);
+      pk.t+=dt*pk.sp;
+      if(pk.t>=1){pk.e=(Math.random()*st.edges.length)|0;pk.t=0;pk.sp=R(.45,1.05);}
+    }
+  },
+  poster(st,ctx,w,h,acc){ctx.clearRect(0,0,w,h);this.base(st,ctx,acc);
+    st.packets.slice(0,4).forEach(pk=>{const[a,b]=st.edges[pk.e],A=st.nodes[a],B=st.nodes[b];
+      ctx.fillStyle=acc;ctx.fillRect(A.x+(B.x-A.x)*pk.t-2,A.y+(B.y-A.y)*pk.t-2,4,4);});}
+};
+
+/* -- 2. deploy pipeline (cronless / automation) -- */
+ANIM.pipeline={
+  init(){return{};},
+  paint(ctx,w,h,acc,prog){
+    ctx.clearRect(0,0,w,h);
+    const S=['GIT','LINT','TEST','BUILD','CANARY','PROD'],n=S.length,g=12;
+    const bw=clamp((w-36)/n-g,40,104),bh=30,tot=n*bw+(n-1)*g,x0=(w-tot)/2,y=h/2-bh/2-8;
+    ctx.font='10px '+MONO;ctx.textAlign='center';
+    for(let i=0;i<n;i++){
+      const x=x0+i*(bw+g),done=prog>=i+1,cur=prog>=i&&prog<i+1,frac=clamp(prog-i,0,1);
+      if(done){ctx.fillStyle=acc;ctx.fillRect(x,y,bw,bh);}
+      else{ctx.strokeStyle=cur?acc:'rgba(255,255,255,.22)';ctx.lineWidth=cur?1.5:1;ctx.strokeRect(x+.5,y+.5,bw-1,bh-1);}
+      ctx.fillStyle=done?'#000':cur?'#fff':'rgba(255,255,255,.4)';
+      ctx.fillText(S[i],x+bw/2,y+bh/2+3.5);
+      if(cur){ctx.fillStyle=acc;ctx.fillRect(x,y+bh+5,bw*frac,3);}
+      if(i<n-1){ctx.strokeStyle=prog>i+1?acc:'rgba(255,255,255,.18)';ctx.lineWidth=1;
+        ctx.beginPath();ctx.moveTo(x+bw,y+bh/2);ctx.lineTo(x+bw+g,y+bh/2);ctx.stroke();}
+    }
+    ctx.textAlign='left';ctx.font='10px '+MONO;
+    ctx.fillStyle=prog>=n?acc:'rgba(255,255,255,.55)';
+    ctx.fillText(prog>=n?'DEPLOY COMPLETE — 87s':'RUNNING — STAGE '+Math.min(n,Math.max(1,Math.ceil(prog||1)))+'/'+n,x0,h-10);
+  },
+  frame(st,ctx,w,h,t,dt,p,acc){const n=6;this.paint(ctx,w,h,acc,p!=null?p*(n+1):(t%(n+1.4)));},
+  poster(st,ctx,w,h,acc){this.paint(ctx,w,h,acc,3.35);}
+};
+
+/* -- 3. query waveform (tapesql / software) -- */
+ANIM.wave={
+  init(){return{};},
+  frame(st,ctx,w,h,t,dt,p,acc){
+    ctx.clearRect(0,0,w,h);
+    const mid=h/2;
+    ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=1;ctx.beginPath();
+    for(let x=10;x<w-6;x+=44){ctx.moveTo(x,8);ctx.lineTo(x,h-8);}
+    for(let y=10;y<h-8;y+=34){ctx.moveTo(8,y);ctx.lineTo(w-8,y);}
+    ctx.stroke();
+    const drive=p!=null?.25+p*.95:.35+.55*(.5+.5*Math.sin(t*.6));
+    const burst=Math.pow(Math.max(0,Math.sin(t*1.7)),14);
+    const A=h*.3*drive;
+    const trace=(ph,f1,f2)=>{ctx.beginPath();
+      for(let x=0;x<=w;x+=3){
+        const y=mid+Math.sin(x*.018*f1+t*2.6+ph)*A*.55+Math.sin(x*.043*f2-t*4.2+ph*2)*A*.35+burst*Math.sin(x*.35+t*46)*A*.5;
+        x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}ctx.stroke();};
+    ctx.lineWidth=1;ctx.strokeStyle='rgba(255,255,255,.16)';trace(0,1,1);
+    ctx.strokeStyle='rgba(255,255,255,.4)';trace(2.1,.9,1.15);
+    ctx.lineWidth=2;ctx.strokeStyle=acc;trace(4.2,1.1,.9);
+    ctx.font='10px '+MONO;ctx.textAlign='left';
+    ctx.fillStyle='rgba(255,255,255,.6)';ctx.fillText('EXPLAIN ANALYZE',12,h-12);
+    ctx.fillStyle=acc;ctx.fillText((18+A/h*160+burst*55).toFixed(1)+' ms',132,h-12);
+  },
+  poster(st,ctx,w,h,acc){this.frame(st,ctx,w,h,1.3,0,.45,acc);}
+};
+
+/* -- 4. deploy terminal (shipbot / automation) -- */
+ANIM.term={
+  init(){
+    const LINES=[
+      [['$ ','A'],['shipbot deploy --prod','W']],
+      [['   [ok] ','A'],['142 tests passed in 8.2s','D']],
+      [['   [ok] ','A'],['canary 5% — error rate 0.00%','D']],
+      [['   [ok] ','A'],['promoted to 100% — 87s total','D']]
+    ];
+    const chars=[];
+    LINES.forEach(l=>l.forEach(([txt,c])=>{for(const ch of txt)chars.push({ch,c});chars.push({ch:'\n'});}));
+    return{chars,total:chars.length,budget:4.6,T:7.5};
+  },
+  draw(st,ctx,w,h,idx,acc,showCur,blinkOn){
+    ctx.clearRect(0,0,w,h);
+    ctx.font='11px '+MONO;ctx.textAlign='left';
+    let x=14,y=24;
+    for(let i=0;i<idx;i++){
+      const c=st.chars[i];
+      if(c.ch==='\n'){x=14;y+=19;continue;}
+      ctx.fillStyle=c.c==='A'?acc:c.c==='W'?'rgba(255,255,255,.9)':'rgba(255,255,255,.5)';
+      ctx.fillText(c.ch,x,y);x+=ctx.measureText(c.ch).width;
+    }
+    ctx.fillStyle='rgba(255,255,255,.45)';ctx.textAlign='right';
+    ctx.fillText('SHIPBOT v2.3',w-12,18);
+    if(showCur&&blinkOn){ctx.fillStyle=acc;ctx.fillRect(x+2,y-10,7,13);}
+  },
+  frame(st,ctx,w,h,t,dt,p,acc){
+    const tt=t%st.T;
+    const idx=p!=null?Math.floor(p*st.total):Math.floor(clamp(tt/st.budget,0,1)*st.total);
+    this.draw(st,ctx,w,h,idx,acc,true,(t*2.4)%1<.65);
+  },
+  poster(st,ctx,w,h,acc){this.draw(st,ctx,w,h,23,acc,true,true);}
+};
+
+/* -- 5. latency ledger bars (40ms / web) -- */
+ANIM.sort={
+  init(){
+    const n=27,sorted=Array.from({length:n},(_,i)=>8+(i/(n-1))*84);
+    const shuf=sorted.slice();
+    for(let i=n-1;i>0;i--){const j=(Math.random()*(i+1))|0;[shuf[i],shuf[j]]=[shuf[j],shuf[i]];}
+    return{n,sorted,shuf};
+  },
+  frame(st,ctx,w,h,t,dt,p,acc){
+    ctx.clearRect(0,0,w,h);
+    const mix=p!=null?ease(p):ease(.5+.5*Math.sin(t*.85-Math.PI/2));
+    const pad=16,bw=(w-pad*2)/st.n,base=h-24,maxH=h-54;
+    for(let i=0;i<st.n;i++){
+      const v=st.shuf[i]+(st.sorted[i]-st.shuf[i])*mix;
+      const bh=(v/100)*maxH;
+      ctx.fillStyle=v>42?acc:'rgba(255,255,255,.82)';
+      ctx.fillRect(pad+i*bw+1,base-bh,bw-2,bh);
+    }
+    const ly=base-(42/100)*maxH;
+    ctx.strokeStyle=acc;ctx.setLineDash([4,4]);ctx.beginPath();
+    ctx.moveTo(pad,ly);ctx.lineTo(w-pad,ly);ctx.stroke();ctx.setLineDash([]);
+    ctx.font='10px '+MONO;ctx.textAlign='left';
+    ctx.fillStyle=acc;ctx.fillText('P95 BUDGET — 40ms',pad,ly-6);
+    ctx.textAlign='right';ctx.fillStyle='rgba(255,255,255,.55)';
+    ctx.fillText('INTERACTION P95 — '+Math.round(lerp(214,38,mix))+'ms',w-pad,h-9);
+  },
+  poster(st,ctx,w,h,acc){this.frame(st,ctx,w,h,0,0,null,acc);}
+};
+
+/* -- 6. rotating edge router (mesh-router / software) -- */
+ANIM.mesh={
+  init(){
+    const q=(1+Math.sqrt(5))/2;
+    let vs=[[-1,q,0],[1,q,0],[-1,-q,0],[1,-q,0],[0,-1,q],[0,1,q],[0,-1,-q],[0,1,-q],[q,0,-1],[q,0,1],[-q,0,-1],[-q,0,1]];
+    vs=vs.map(v=>{const l=Math.hypot(v[0],v[1],v[2]);return[v[0]/l,v[1]/l,v[2]/l];});
+    let mind=Infinity;
+    for(let i=0;i<12;i++)for(let j=i+1;j<12;j++){
+      const d=Math.hypot(vs[i][0]-vs[j][0],vs[i][1]-vs[j][1],vs[i][2]-vs[j][2]);
+      if(d<mind)mind=d;
+    }
+    const edges=[];
+    for(let i=0;i<12;i++)for(let j=i+1;j<12;j++){
+      const d=Math.hypot(vs[i][0]-vs[j][0],vs[i][1]-vs[j][1],vs[i][2]-vs[j][2]);
+      if(d<mind*1.05)edges.push([i,j]);
+    }
+    return{vs,edges};
+  },
+  frame(st,ctx,w,h,t,dt,p,acc){
+    ctx.clearRect(0,0,w,h);
+    const cx=w/2,cy=h/2-6,S=Math.min(w,h)*.33,f=3,ry=t*.5,rx=.55+Math.sin(t*.21)*.3;
+    const P=st.vs.map(([x,y,z])=>{
+      const X=x*Math.cos(ry)+z*Math.sin(ry),Z=-x*Math.sin(ry)+z*Math.cos(ry);
+      const Y2=y*Math.cos(rx)-Z*Math.sin(rx),Z2=y*Math.sin(rx)+Z*Math.cos(rx);
+      const s=f/(f-Z2);
+      return{x:cx+X*S*s,y:cy+Y2*S*s};
+    });
+    ctx.lineWidth=1;ctx.strokeStyle='rgba(255,255,255,.28)';ctx.beginPath();
+    for(const[a,b]of st.edges){ctx.moveTo(P[a].x,P[a].y);ctx.lineTo(P[b].x,P[b].y);}
+    ctx.stroke();
+    P.forEach((v,i)=>{ctx.fillStyle=i%3===0?acc:'rgba(255,255,255,.7)';ctx.fillRect(v.x-2,v.y-2,4,4);});
+    const sp=(t*.7)%st.edges.length,ei=sp|0,fr=sp-ei,[a,b]=st.edges[ei];
+    ctx.fillStyle=acc;ctx.beginPath();
+    ctx.arc(P[a].x+(P[b].x-P[a].x)*fr,P[a].y+(P[b].y-P[a].y)*fr,3.4,0,7);ctx.fill();
+    ctx.font='10px '+MONO;ctx.textAlign='left';ctx.fillStyle='rgba(255,255,255,.5)';
+    ctx.fillText('EDGE ROUTER — 12 REGIONS',12,h-12);
+  },
+  poster(st,ctx,w,h,acc){this.frame(st,ctx,w,h,.9,0,null,acc);}
+};
+
+/* -- 7. responsive reflow (UNIT 01 — web) -- */
+ANIM.layout={
+  BP:['1440','768','390'],
+  L:[
+    [[0,0,1,.11],[0,.15,.58,.36],[.62,.15,.38,.36],[0,.55,.31,.30],[.345,.55,.31,.30],[.69,.55,.31,.30],[0,.89,1,.11]],
+    [[0,0,1,.11],[0,.15,.49,.34],[.51,.15,.49,.34],[0,.53,.49,.26],[.51,.53,.49,.26],[0,.81,1,.10],[0,.93,1,.07]],
+    [[0,0,1,.09],[0,.12,1,.20],[0,.34,1,.20],[0,.56,1,.12],[0,.69,1,.12],[0,.82,1,.10],[0,.93,1,.07]]
+  ],
+  init(){return{};},
+  rects(i,w,h,top){
+    return this.L[i].map(([x,y,ww,hh])=>({x:6+x*(w-12),y:top+y*(h-top-10),w:ww*(w-12),h:hh*(h-top-10)}));
+  },
+  frame(st,ctx,w,h,t,dt,p,acc){
+    ctx.clearRect(0,0,w,h);
+    const top=30,CH=7.8,ph=((p!=null?p*CH:t)%CH)/2.6,i=Math.floor(ph)%3,frac=ph%1;
+    const m=ease(clamp(frac/.3,0,1));
+    const A=this.rects(i,w,h,top),B=this.rects((i+1)%3,w,h,top);
+    const Rs=A.map((r,k)=>({x:lerp(r.x,B[k].x,m),y:lerp(r.y,B[k].y,m),w:lerp(r.w,B[k].w,m),h:lerp(r.h,B[k].h,m)}));
+    ctx.fillStyle='rgba(255,255,255,.06)';ctx.fillRect(6,8,w-12,16);
+    ['#ff5f57','#febc2e','#28c840'].forEach((c,k)=>{ctx.fillStyle=c;ctx.beginPath();ctx.arc(16+k*12,16,3.2,0,7);ctx.fill();});
+    ctx.font='9px '+MONO;ctx.fillStyle='rgba(255,255,255,.55)';ctx.textAlign='left';
+    ctx.fillText('voss.studio — '+this.BP[i]+'px',52,19);
+    ctx.fillStyle=acc;ctx.fillRect(w-20,13,6,6);
+    const act=Math.floor(t*1.2)%Rs.length;
+    Rs.forEach((r,k)=>{
+      ctx.strokeStyle=k===act?acc:'rgba(255,255,255,.28)';ctx.lineWidth=k===act?1.5:1;
+      ctx.fillStyle=k===act?'rgba(255,255,255,.05)':'rgba(255,255,255,.03)';
+      ctx.fillRect(r.x,r.y,r.w,r.h);ctx.strokeRect(r.x+.5,r.y+.5,r.w-1,r.h-1);
+      if(k===0){ctx.fillStyle=acc;ctx.fillRect(r.x,r.y+r.h-2,r.w,2);}
+      if(k===act&&r.h>20){
+        ctx.fillStyle=acc;
+        const n=Math.max(2,Math.floor(r.h/13));
+        for(let s=0;s<n;s++){const lw=r.w*(.3+.5*((s*7919%13)/13));ctx.fillRect(r.x+7,r.y+7+s*10,Math.max(6,Math.min(lw,r.w-14)),2);}
+      }
+    });
+    ctx.textAlign='left';ctx.fillStyle='rgba(255,255,255,.5)';ctx.font='10px '+MONO;
+    ctx.fillText('REFLOW — '+this.BP[i]+'px',10,h-5);
+    ctx.textAlign='right';ctx.fillStyle=acc;ctx.fillText('CLS 0.00',w-10,h-5);
+  },
+  poster(st,ctx,w,h,acc){this.frame(st,ctx,w,h,.05,0,null,acc);}
+};
+
+/* -- 8. webhook fabric (UNIT 03 / HOOKLINE — automation) -- */
+ANIM.flow={
+  init(w,h){
+    const bw=Math.min(w*.17,112),bh=Math.min(h*.17,42);
+    const col=[w*.06,w*.42,w*.78],row=[h*.20,h*.62];
+    const boxes=[
+      {label:'TRIGGER',c:0,r:0},{label:'VALIDATE',c:1,r:0},{label:'BUILD',c:2,r:0},
+      {label:'DEPLOY',c:2,r:1},{label:'NOTIFY',c:1,r:1},{label:'RETRY',c:0,r:1}
+    ].map(b=>({label:b.label,x:col[b.c],y:row[b.r],w:bw,h:bh,flash:0}));
+    const cx=i=>boxes[i].x+bw/2, cy=i=>boxes[i].y+bh/2;
+    const L=i=>({x:boxes[i].x,y:cy(i)}), Rt=i=>({x:boxes[i].x+bw,y:cy(i)});
+    const T=i=>({x:cx(i),y:boxes[i].y}), Bt=i=>({x:cx(i),y:boxes[i].y+bh});
+    const g1=boxes[5].y-(boxes[1].y+bh), m1=boxes[1].y+bh+g1*.38, m2=boxes[5].y-g1*.38;
+    const mk=(pts,from,to)=>{let len=0;const seg=[];
+      for(let k=0;k<pts.length-1;k++){const d=Math.hypot(pts[k+1].x-pts[k].x,pts[k+1].y-pts[k].y);seg.push(d);len+=d;}
+      return{pts,from,to,seg,len};};
+    const edges=[
+      mk([Rt(0),L(1)],0,1),
+      mk([Rt(1),L(2)],1,2),
+      mk([Bt(1),{x:cx(1),y:m1},{x:cx(5),y:m1},T(5)],1,5),
+      mk([T(5),{x:cx(5),y:m2},{x:cx(1),y:m2},Bt(1)],5,1),
+      mk([Bt(2),T(3)],2,3),
+      mk([L(3),Rt(4)],3,4)
+    ];
+    return{boxes,edges,
+      out:{0:[0],1:[1,2],5:[3],2:[4],3:[5],4:[]},
+      toks:[{e:0,t:0,sp:.5},{e:4,t:.4,sp:.45},{e:5,t:.75,sp:.5}],runs:1043};
+  },
+  ptAt(e,s){
+    for(let k=0;k<e.seg.length;k++){
+      if(s<=e.seg[k]){const f=e.seg[k]?s/e.seg[k]:0,a=e.pts[k],b=e.pts[k+1];
+        return{x:a.x+(b.x-a.x)*f,y:a.y+(b.y-a.y)*f};}
+      s-=e.seg[k];
+    }
+    return e.pts[e.pts.length-1];
+  },
+  frame(st,ctx,w,h,t,dt,p,acc){
+    ctx.clearRect(0,0,w,h);
+    ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=1;
+    for(const e of st.edges){ctx.beginPath();ctx.moveTo(e.pts[0].x,e.pts[0].y);
+      for(let k=1;k<e.pts.length;k++)ctx.lineTo(e.pts[k].x,e.pts[k].y);ctx.stroke();}
+    for(const tk of st.toks){
+      const e=st.edges[tk.e],s=clamp(tk.t,0,1)*e.len,pos=this.ptAt(e,s);
+      const tail=this.ptAt(e,Math.max(0,s-12));
+      ctx.strokeStyle=acc;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(tail.x,tail.y);ctx.lineTo(pos.x,pos.y);ctx.stroke();
+      ctx.fillStyle='#fff';ctx.fillRect(pos.x-2,pos.y-2,4,4);
+      tk.t+=dt*tk.sp;
+      if(tk.t>=1){
+        const node=e.to; st.boxes[node].flash=1;
+        const outs=st.out[node];
+        if(!outs.length){st.runs++;tk.e=0;}
+        else if(outs.length===2)tk.e=Math.random()<.85?outs[0]:outs[1];
+        else tk.e=outs[0];
+        tk.t=0;tk.sp=R(.4,.6);
+      }
+    }
+    ctx.font='9px '+MONO;ctx.textAlign='center';ctx.textBaseline='middle';
+    for(const b of st.boxes){
+      b.flash=Math.max(0,b.flash-dt*2);const f=b.flash;
+      ctx.fillStyle=f>0?'rgba(255,255,255,'+(.04+f*.18).toFixed(3)+')':'rgba(255,255,255,.04)';
+      ctx.fillRect(b.x,b.y,b.w,b.h);
+      ctx.strokeStyle=f>0?acc:'rgba(255,255,255,.3)';ctx.lineWidth=f>0?1.5:1;
+      ctx.strokeRect(b.x+.5,b.y+.5,b.w-1,b.h-1);
+      ctx.fillStyle=f>0?acc:'rgba(255,255,255,.75)';
+      ctx.fillText(b.label,b.x+b.w/2,b.y+b.h/2+.5);
+    }
+    ctx.textBaseline='alphabetic';ctx.textAlign='left';ctx.font='10px '+MONO;
+    ctx.fillStyle='rgba(255,255,255,.5)';ctx.fillText('WEBHOOK FABRIC — RUN #'+st.runs,10,h-8);
+    ctx.textAlign='right';ctx.fillStyle=acc;ctx.fillText('FAIL 15% → RETRY LOOP',w-10,h-8);
+  },
+  poster(st,ctx,w,h,acc){this.frame(st,ctx,w,h,.9,0,null,acc);}
+};
+
+/* ================= CANVAS ENGINE ================= */
+const sims=[],active=new Set(),scrubMap=new Map();
+
+function sizeSim(s){
+  const r=s.cv.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);
+  s.w=Math.max(10,Math.round(r.width));s.h=Math.max(10,Math.round(r.height));
+  s.cv.width=s.w*d;s.cv.height=s.h*d;
+  s.ctx.setTransform(d,0,0,d,0,0);
+}
+function makeSim(cv,name){
+  const s={cv,ctx:cv.getContext('2d'),name};
+  sizeSim(s);s.st=ANIM[name].init(s.w,s.h);
+  ANIM[name].poster(s.st,s.ctx,s.w,s.h,ACC);
+  return s;
+}
+function drawPoster(s){ANIM[s.name].poster(s.st,s.ctx,s.w,s.h,ACC);}
+
+ $$('canvas.sim[data-anim]').forEach(cv=>sims.push(makeSim(cv,cv.dataset.anim)));
+
+/* hover-to-run previews (resolve sim at event time — hero sim swaps) */
+ $$('.cvwrap[data-live]').forEach(w=>{
+  const cv=w.querySelector('canvas');
+  const get=()=>sims.find(s=>s.cv===cv);
+  w.addEventListener('mouseenter',()=>{const s=get();if(s){active.add(s);scrubMap.delete(s);}});
+  w.addEventListener('mouseleave',()=>{const s=get();if(s){active.delete(s);drawPoster(s);}});
+  w.addEventListener('click',()=>{ /* touch fallback: tap runs a 6s preview */
+    if(matchMedia('(hover:hover)').matches)return;
+    const s=get();if(!s)return;
+    active.add(s);toast('Live simulation running — 6 seconds.');
+    setTimeout(()=>{active.delete(s);drawPoster(s);},6000);
+  });
+});
+
+/* resize: rebuild states + posters */
+let rzT;
+window.addEventListener('resize',()=>{
+  clearTimeout(rzT);
+  rzT=setTimeout(()=>{
+    sims.forEach(s=>{sizeSim(s);s.st=ANIM[s.name].init(s.w,s.h);drawPoster(s);});
+    if(compSim){sizeSim(compSim);compSim.st=ANIM[compSim.name].init(compSim.w,compSim.h);}
+  },200);
+});
+
+/* ================= MASTER LOOP: cursor + timecode + previews ================= */
+const cur=$('#cursor'),lab=$('#cursorLabel'),tcEl=$('#tc');
+let mx=innerWidth/2,my=innerHeight/2,cx=mx,cy=my;
+window.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  const labEl=e.target.closest('[data-cursor]');
+  lab.textContent=labEl?labEl.dataset.cursor:'RUN';
+  cur.classList.toggle('label',!!labEl);
+  cur.classList.toggle('link',!labEl&&!!e.target.closest('a,button,input,select,textarea,.note,.fbtn'));
+});
+const t0=performance.now();
+let lastN=performance.now();
+function loop(now){
+  const dt=Math.min(.05,(now-lastN)/1000);lastN=now;const t=now/1000;
+  cx+=(mx-cx)*.22;cy+=(my-cy)*.22;
+  cur.style.transform=`translate(${cx}px,${cy}px)`;
+  const el=(now-t0)/1000;
+  tcEl.textContent='00:'+String(Math.floor(el/60)%60).padStart(2,'0')+':'+String(Math.floor(el%60)).padStart(2,'0')+':'+String(Math.floor((el%1)*24)).padStart(2,'0');
+  active.forEach(s=>ANIM[s.name].frame(s.st,s.ctx,s.w,s.h,t,dt,scrubMap.get(s),ACC));
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+/* ================= LENS — hero discipline switcher ================= */
+/* stackReady: the ledger module initializes later in this script, so the
+   lens must not touch it until then — this was the crash that froze the intro. */
+const LENS={
+  web:{theme:'red',sim:'layout',name:'PAPERTRAIL',unit:'01 — WEB',uline:'UNIT 01 ⁄ WEB ⁄ 11 MIN',
+    m1:'PUBLISHING PLATFORM ⁄ 98 LIGHTHOUSE',m2:'EDGE-RENDERED ⁄ DESIGN SYSTEM INSIDE',fmt:'TS ⁄ REACT ⁄ CSS',tag:'U.01'},
+  soft:{theme:'blue',sim:'mesh',name:'MESH-ROUTER',unit:'02 — SOFTWARE',uline:'UNIT 02 ⁄ SOFTWARE ⁄ 10 MIN',
+    m1:'40M REQ ⁄ DAY, 300 LINES OF RUST',m2:'POSTMORTEM INSIDE',fmt:'RUST ⁄ POSTGRES ⁄ GO',tag:'U.02'},
+  auto:{theme:'yellow',sim:'flow',name:'HOOKLINE',unit:'03 — AUTOMATION',uline:'UNIT 03 ⁄ AUTOMATION ⁄ 9 MIN',
+    m1:'12K WEBHOOKS ⁄ DAY, ZERO 2AM PAGES',m2:'RUNBOOK INSIDE',fmt:'GO ⁄ QUEUE ⁄ WEBHOOKS',tag:'U.03'}
+};
+let lens=null,featSim=sims.find(s=>s.cv===$('#featCv'))||null,stackReady=false;
+
+function setLens(k){
+  if(k===lens)return;
+  lens=k;const L=LENS[k];
+  document.body.dataset.theme=L.theme;
+  $('#hero').dataset.scene=L.theme;
+  ACC=getComputedStyle(document.body).getPropertyValue('--acc').trim();
+  $$('.hl').forEach(b=>b.classList.toggle('act',b.dataset.lens===k));
+  $('#lensTag').textContent=L.tag;
+  $('#slateUnit').textContent=L.unit;
+  $('#slateFmt').textContent=L.fmt;
+  $('#featName').textContent='LATEST BUILD — '+L.name;
+  $('#featUnit').textContent=L.uline;
+  $('#featM1').innerHTML='<b>'+L.name+'</b> — '+L.m1;
+  $('#featM2').textContent=L.m2;
+  if(featSim){const i=sims.indexOf(featSim);if(i>-1)sims.splice(i,1);active.delete(featSim);}
+  featSim=makeSim($('#featCv'),L.sim);
+  sims.push(featSim);
+  sims.forEach(s=>{if(!active.has(s)&&s!==featSim)drawPoster(s);});
+  if(stackReady)renderStack();
+}
+ $$('.hl').forEach(b=>b.addEventListener('click',()=>setLens(b.dataset.lens)));
+setLens('web');
+
+/* ================= LIBRARY FILTERS (300ms FLIP shuffle) ================= */
+const libGrid=$('#libGrid'),libCount=$('#libCount');
+function applyFilter(cat){
+  $$('.fbtn').forEach(b=>b.classList.toggle('act',b.dataset.f===cat));
+  const cards=$$('.card[data-cat]');
+  const first=new Map();
+  cards.forEach(c=>{const r=c.getBoundingClientRect();if(r.width)first.set(c,r);});
+  let shown=0;
+  cards.forEach(c=>{const ok=cat==='all'||c.dataset.cat===cat;c.classList.toggle('hide',!ok);if(ok)shown++;});
+  libCount.textContent='SHOWING '+String(shown).padStart(2,'0')+' ⁄ '+String(cards.length).padStart(2,'0');
+  void libGrid.offsetWidth;
+  cards.forEach(c=>{
+    if(c.classList.contains('hide'))return;
+    const l=c.getBoundingClientRect(),f=first.get(c);
+    if(!f){c.animate([{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:300,easing:'ease-out'});return;}
+    const dx=f.left-l.left,dy=f.top-l.top;
+    if(Math.abs(dx)+Math.abs(dy)>2)
+      c.animate([{transform:`translate(${dx}px,${dy}px)`},{transform:'none'}],{duration:300,easing:'cubic-bezier(.22,.68,.26,1)'});
+  });
+}
+ $$('.fbtn').forEach(b=>b.addEventListener('click',()=>applyFilter(b.dataset.f)));
+
+/* unit VIEW WORK → filter library + scroll */
+ $$('.u-view').forEach(b=>b.addEventListener('click',()=>{
+  const cat=b.dataset.u;
+  applyFilter(cat);
+  $('#library').scrollIntoView({behavior:'smooth'});
+  toast('Library cut to '+({web:'UNIT 01 — WEB',soft:'UNIT 02 — SOFTWARE',auto:'UNIT 03 — AUTOMATION'})[cat]+'.');
+}));
+
+/* collapsible companion notes on cards */
+ $$('.cnote-btn').forEach(btn=>btn.addEventListener('click',e=>{
+  e.stopPropagation();
+  const note=btn.nextElementSibling,open=note.classList.toggle('open');
+  btn.textContent=open?'COMPANION NOTE —':'COMPANION NOTE +';
+}));
+
+/* ================= FIELD NOTES + READER ================= */
+const NOTES=[
+{
+  unit:'UNIT 01 — WEB',anim:'sort',chapters:['01 — THE BUDGET','02 — WHERE IT WENT','03 — WHAT\'S LEFT'],
+  html:`
+  <p class="lede">Nobody has ever told me an app feels slow. They just leave. So I stopped thinking in page-load seconds and started thinking in a single number: 40 milliseconds — the ceiling where an interaction still feels instant.</p>
+  <h2 data-i="01">THE BUDGET</h2>
+  <p>The first audit hurt. 214ms from click to paint on our heaviest dashboard, itemized like a bar tab: 90ms of framework hydration doing nothing the user asked for, 40ms of layout thrash from a resize handler with commitment issues, 30ms parsing JSON the user hadn't scrolled to yet — and the rest, honestly, mystery.</p>
+  <h2 data-i="02">WHERE IT WENT</h2>
+  <p>The fixes weren't exotic. Streamed SSR so the shell paints before the data lands. Parsing moved off the main thread into a worker. The table went virtualized. And the 60-kilobyte animation library got deleted, because CSS had been able to do all of it for a decade and was charging nothing.</p>
+  <blockquote>Fast is a feature you re-ship every sprint — or lose by default.</blockquote>
+  <h2 data-i="03">WHAT'S LEFT</h2>
+  <p>The discipline is the real product: the 40ms budget is now a check in CI, and a regression fails the build the same way a broken test does. Performance isn't a project with an end date; it's a tax code, and audits run forever. We sit at 38ms today, and I can account for every one of them.</p>
+  <div class="receipts">
+    <div class="rline"><span>INTERACTION P95</span><i></i><b>214ms → 38ms</b></div>
+    <div class="rline"><span>MAIN-THREAD WORK</span><i></i><b>−64%</b></div>
+    <div class="rline"><span>SHIPPED JS</span><i></i><b>−180KB</b></div>
+  </div>`
+},
+{
+  unit:'UNIT 02 — SOFTWARE',anim:'wave',chapters:['01 — GAME FILM','02 — THE REPLAY RIG','03 — CALLS THAT CHANGED'],
+  html:`
+  <p class="lede">Sports teams watch film of their own games. Engineers ship queries they've never once watched run. This is the story of the projector I built — and the three plays it exposed.</p>
+  <h2 data-i="01">GAME FILM</h2>
+  <p>EXPLAIN ANALYZE output is a box score. It tells you the final numbers — rows, cost, time — but not the game: the order things happened, the moments the planner hesitated, the exact point where 40 rows became a scan of 12 million. You can't fix what you've only read. You have to watch it.</p>
+  <h2 data-i="02">THE REPLAY RIG</h2>
+  <p>tapesql captures the plan, the timings and the row counts, then plays them back at a tenth of speed on a timeline. The waveform sitting next to this note is that playback, literally. Spikes are scans, plateaus are sorts, and the flat dead stretches are the locks nobody planned for. Two afternoons of watching replays beat two quarters of guessing.</p>
+  <h2 data-i="03">CALLS THAT CHANGED</h2>
+  <p>Play one: an N+1 hiding behind ORM lazy-loading — 41ms that looked harmless until the replay showed it 340 times in a row. Play two: the "optimization" index that made reads faster and writes 30% slower; the film showed the write amplification plain as day. Play three: the sequential scan on twelve million rows that was "fine in staging" — staging had four hundred rows and no opinions.</p>
+  <blockquote>A slow query in staging is a rumor. In production it's a fact with a pager.</blockquote>
+  <div class="receipts">
+    <div class="rline"><span>N+1 ELIMINATED</span><i></i><b>340 → 1</b></div>
+    <div class="rline"><span>WRITE AMPLIFICATION</span><i></i><b>−30%</b></div>
+    <div class="rline"><span>P95 QUERY</span><i></i><b>412ms → 41ms</b></div>
+  </div>
+  <p>Staging is the warm-up act. Production is the game — and you don't get better at a game you refuse to watch.</p>`
+},
+{
+  unit:'UNIT 03 — AUTOMATION',anim:'pipeline',chapters:['01 — THE CRIME SCENE','02 — THE STATE MACHINE','03 — WHAT HELD'],
+  html:`
+  <p class="lede">Four hundred cron jobs ran the production systems at my last gig. I interviewed every single one. Most had no idea why they existed, and three were actively lying to us.</p>
+  <h2 data-i="01">THE CRIME SCENE</h2>
+  <p>The audit started innocently: I wanted to know which jobs were still needed. Two days later I had a spreadsheet that read like a police report. A job syncing the same table three times an hour under three different names. A cleanup routine running every sixty seconds for data that arrived weekly. A retry wrapper that, on failure, launched the same job twice more — unconditionally — so a job that died at 2am fired again at 2am, every day, for eleven months.</p>
+  <p>Here's the core problem: cron reports success when a process ran, not when the work happened. Exit code zero means "I executed". It says nothing about whether anything got done, whether it got done twice, or whether it has been quietly failing since last quarter. Cron is a clock, and we were using it as a source of truth.</p>
+  <h2 data-i="02">THE STATE MACHINE</h2>
+  <p>cronless — the tool that came out of this — replaced the graveyard with one idea: a queue of intents. Nothing is scheduled; things are claimed. A worker picks up an intent, marks it in-flight with a heartbeat, does the work, records a result. If the heartbeat dies, another worker claims the intent. No clocks, no overlaps, no silent failures — every transition is a row you can query.</p>
+  <p>Three rules made it hold: every intent carries an idempotency key, so a double-claim can't double-charge anyone. Every retry has a deadline, because a retry without one is a denial-of-service attack on future you. And every poison job goes to a dead-letter row with the actual error attached — not a log line nobody greps.</p>
+  <blockquote>A cron job is a promise nobody wrote down. A state machine is the same promise with a paper trail.</blockquote>
+  <h2 data-i="03">WHAT HELD</h2>
+  <div class="receipts">
+    <div class="rline"><span>CRON JOBS</span><i></i><b>400 → 0</b></div>
+    <div class="rline"><span>SCHEDULER WORKERS</span><i></i><b>14</b></div>
+    <div class="rline"><span>P99 JOB LATENCY</span><i></i><b>−72%</b></div>
+    <div class="rline"><span>2AM PAGES ⁄ MONTH</span><i></i><b>6 → 0</b></div>
+  </div>
+  <p>Fourteen workers now do what four hundred jobs did, and the pager went quiet. The boring part is the best part: there's nothing to babysit, because there's nothing ticking. If you're starting a new system this year, do me one favor — before you type crontab -e, ask what state you're actually trying to move. Then write that down instead.</p>`
+}];
+
+const reader=$('#reader'),rArt=$('#rArt'),compCv=$('#compCv');
+let compSim=null,headEls=[],chapEls=[];
+
+function openNote(i){
+  const n=NOTES[i];
+  rArt.innerHTML=n.html;
+  headEls=[...rArt.querySelectorAll('h2')];
+  $('#rLabel').textContent='FN—0'+(i+1)+' ⁄ '+n.unit;
+  $('#compMeta').textContent='FN—0'+(i+1)+' ⁄ '+n.unit+' ⁄ COMPANION: '+n.anim.toUpperCase();
+  const ul=$('#chapterList');ul.innerHTML='';
+  chapEls=n.chapters.map((c,ci)=>{
+    const li=document.createElement('li');
+    li.innerHTML='<i></i>'+c;
+    li.addEventListener('click',()=>reader.scrollTo({top:headEls[ci].offsetTop-100,behavior:'smooth'}));
+    ul.appendChild(li);return li;
+  });
+  reader.classList.add('open');
+  document.body.classList.add('lock');
+  reader.scrollTop=0;
+  requestAnimationFrame(()=>{
+    if(compSim)active.delete(compSim);
+    compSim=makeSim(compCv,n.anim);
+    active.add(compSim);scrubMap.set(compSim,0);
+    reader.dispatchEvent(new Event('scroll'));
+  });
+}
+function closeNote(){
+  if(compSim){active.delete(compSim);scrubMap.delete(compSim);compSim=null;}
+  reader.classList.remove('open');
+  document.body.classList.remove('lock');
+}
+ $$('.note').forEach(n=>{
+  const open=()=>openNote(+n.dataset.note);
+  n.addEventListener('click',open);
+  n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}});
+});
+ $('#readerClose').addEventListener('click',closeNote);
+reader.addEventListener('scroll',()=>{
+  const max=reader.scrollHeight-reader.clientHeight;
+  const p=max>0?reader.scrollTop/max:0;
+  $('#rFill').style.width=(p*100)+'%';
+  $('#compFill').style.width=(p*100)+'%';
+  $('#compPct').textContent=Math.round(p*100)+'%';
+  if(compSim)scrubMap.set(compSim,p);
+  let ci=0;
+  headEls.forEach((hd,i)=>{if(hd.offsetTop-140<=reader.scrollTop+180)ci=i;});
+  chapEls.forEach((li,i)=>li.classList.toggle('on',i===ci));
+});
+
+/* ================= THE STACK — budget ledger ================= */
+const TOOLS=[
+  {n:'GitHub Team',p:4,tag:'CORE',b:'where the code lives, obviously',w:'first invoice I ever paid happily.'},
+  {n:'Tailscale',p:6,tag:'NET',b:'wireguard mesh, zero incense or prayers',w:'ssh without the ritual candles.'},
+  {n:'Linear',p:8,tag:'FLOW',b:'issues that move at typing speed',w:'opened before coffee, daily.'},
+  {n:'Doppler',p:8,tag:'SEC',b:'secrets without the .env graveyard',w:'no more .env archaeology digs.'},
+  {n:'Raycast Pro',p:8,tag:'FLOW',b:'the launcher is the OS',w:'muscle memory, now licensed.'},
+  {n:'Figma Pro',p:15,tag:'DESIGN',b:'where UI arguments get settled',w:'arguments end here, in writing.'},
+  {n:'Cursor',p:20,tag:'EDITOR',b:'autocomplete with strong opinions',w:'the pair that never sleeps off.'},
+  {n:'Vercel Pro',p:20,tag:'SHIP',b:'edge hosting with zero-yak deploys',w:'deploy should not be a personality.'},
+  {n:'Resend',p:20,tag:'SHIP',b:'transactional mail that just lands',w:'emails that arrive. imagine that.'},
+  {n:'Supabase Pro',p:25,tag:'DATA',b:'postgres + auth on one bill',w:'postgres with the paperwork done.'},
+  {n:'Sentry Team',p:26,tag:'OPS',b:'stack traces with a paper trail',w:'prod lies less with receipts.'}
+];
+const ledger=$('#stackLedger'),slider=$('#budget');
+const rowEl={};
+TOOLS.forEach(t=>{
+  const el=document.createElement('div');
+  el.className='lrow row';
+  el.innerHTML='<span class="rk"></span><div class="nm"><b>'+t.n+'</b><i>'+t.b+'</i></div><span class="tag">'+t.tag+'</span><span class="ld"></span><span class="pr"></span><span class="st"></span>';
+  el.addEventListener('click',()=>toast(t.n+' — '+t.w));
+  rowEl[t.n]=el;
+});
+function verdictFor(B){
+  if(B===0)return'Free-tier monk mode. Respectful. It won\'t survive the first invoice.';
+  if(B<=25)return'Lean crew — the essentials that never page you at night.';
+  if(B<=60)return'The indie rig. Everything on this list earns its invoice monthly.';
+  if(B<=100)return'Production-grade. This is where side projects stop dying at 3:47am.';
+  return'Full studio rig. Ship like you mean it.';
+}
+function renderStack(){
+  const B=+slider.value;
+  $('#budgetVal').textContent='$'+B;
+  let total=0;const picked=[],benched=[];
+  for(const t of TOOLS){if(total+t.p<=B){picked.push(t);total+=t.p;}else benched.push(t);}
+  picked.sort((a,b)=>b.p-a.p);
+  const rows=[...picked.map(t=>[t,1]),...benched.map(t=>[t,0])];
+  const old=new Map();
+  rows.forEach(([t])=>{const el=rowEl[t.n];if(el.isConnected)old.set(el,el.getBoundingClientRect());});
+  rows.forEach(([t])=>ledger.appendChild(rowEl[t.n]));
+  rows.forEach(([t,inCut])=>{
+    const el=rowEl[t.n];
+    el.classList.toggle('benched',!inCut);
+    el.querySelector('.rk').textContent=inCut?String(picked.indexOf(t)+1).padStart(2,'0'):'--';
+    el.querySelector('.pr').textContent='$'+t.p;
+    el.querySelector('.st').textContent=inCut?'IN THE CUT':'BENCHED';
+    if(old.has(el)){
+      const f=old.get(el),l=el.getBoundingClientRect(),dy=f.top-l.top;
+      if(Math.abs(dy)>2)el.animate([{transform:`translateY(${dy}px)`},{transform:'none'}],{duration:320,easing:'cubic-bezier(.25,.8,.25,1)'});
+    }
+  });
+  $('#meterFill').style.width=(B?total/B*100:0)+'%';
+  $('#stackTotal').innerHTML='USING <b>$'+total+'</b> OF <b>$'+B+'</b> — <b>$'+(B-total)+'</b> LEFT';
+  $('#verdictTxt').textContent=verdictFor(B);
+  slider.style.background='linear-gradient(90deg,'+ACC+' '+(B/150*100)+'%,#222 '+(B/150*100)+'%)';
+}
+slider.addEventListener('input',renderStack);
+renderStack();
+stackReady=true; /* ledger live — the lens may re-render it on switches */
+
+/* ================= NEWSLETTER — typewriter + submit ================= */
+const subInput=$('#subInput');
+const pitches=[
+  'how I cut cold starts by 81%…',
+  'the cron funeral — part II…',
+  'debugging prod at 3:47am, full transcript…',
+  'shipping Rust at the edge without crying…',
+  'the 40ms budget, line by line…'
+];
+let pi=0,cIdx=0,del=false,hold=0;
+setInterval(()=>{
+  const s=pitches[pi];
+  if(!del){
+    if(cIdx<s.length)cIdx++;
+    else{hold++;if(hold>42){del=true;hold=0;}}
+  }else{
+    if(cIdx>0)cIdx--;else{del=false;pi=(pi+1)%pitches.length;}
+  }
+  subInput.setAttribute('placeholder','e.g. '+s.slice(0,cIdx));
+},52);
+
+ $('#subForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const v=subInput.value.trim();
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)){
+    $('#subErr').textContent="THAT ADDRESS WON'T SURVIVE VALIDATION — TRY AGAIN.";
+    subInput.classList.remove('bad');void subInput.offsetWidth;subInput.classList.add('bad');
+    return;
+  }
+  $('#subErr').textContent='';
+  $('#subForm').innerHTML='<div class="sub-ok">WIRED IN — ISSUE #048 LANDS FRIDAY. CHECK YOUR INBOX.</div>';
+  toast('Subscribed — welcome behind the scenes.');
+});
+
+/* ================= BRIEF MODAL ================= */
+const brief=$('#brief'),briefForm=$('#briefForm'),bOk=$('#bOk');
+let briefUnit='web',briefSent=false;
+function setChip(u){
+  briefUnit=u;
+  $$('.b-chip').forEach(c=>c.classList.toggle('sel',c.dataset.unit===u));
+}
+function openBrief(unit){
+  if(unit)setChip(unit);
+  if(briefSent){briefSent=false;briefForm.style.display='';briefForm.reset();bOk.style.display='none';$('#bErr').textContent='';}
+  brief.classList.add('open');
+  document.body.classList.add('lock');
+  setTimeout(()=>$('#bName').focus(),60);
+}
+function closeBrief(){
+  brief.classList.remove('open');
+  document.body.classList.remove('lock');
+}
+ $$('.b-chip').forEach(c=>c.addEventListener('click',()=>setChip(c.dataset.unit)));
+ $$('.u-brief,.s-cta').forEach(b=>b.addEventListener('click',()=>{
+  openBrief(b.dataset.unit);
+  toast('Unit slated — brief form ready.');
+}));
+ $('#navBrief').addEventListener('click',()=>{openBrief();toast('Call sheet open — brief form ready.');});
+ $('#heroBrief').addEventListener('click',()=>{openBrief();toast('Call sheet open — brief form ready.');});
+ $('#briefClose').addEventListener('click',closeBrief);
+ $('#brief .b-back').addEventListener('click',closeBrief);
+ $('#briefForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const n=$('#bName'),m=$('#bMail'),msg=$('#bMsg');
+  const errs=[];
+  [[n,2],[msg,10]].forEach(([el,min])=>{
+    el.classList.remove('bad');
+    if(el.value.trim().length<min){errs.push(el===n?'NAME':'BRIEF (10+ CHARS)');}
+  });
+  m.classList.remove('bad');
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m.value.trim()))errs.push('EMAIL');
+  if(errs.length){
+    [n,m,msg].forEach(el=>el.classList.add('bad'));
+    $('#bErr').textContent='MISSING: '+errs.join(' ⁄ ');
+    return;
+  }
+  $('#bErr').textContent='';
+  const label={web:'UNIT 01 — WEB',soft:'UNIT 02 — SOFTWARE',auto:'UNIT 03 — AUTOMATION'}[briefUnit];
+  briefForm.style.display='none';
+  bOk.style.display='block';
+  bOk.textContent='SLATE MARKED — '+label+'. REPLY WITHIN 24H. GEAR UP.';
+  briefSent=true;
+  toast('Brief sent — '+label+' has it.');
+});
+
+/* combined escape handling */
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape')return;
+  if(reader.classList.contains('open'))closeNote();
+  else if(brief.classList.contains('open'))closeBrief();
+});
+
+/* ================= MISC WIRING ================= */
+ $('#toTop').addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+ $('#copyMail').addEventListener('click',()=>{
+  if(navigator.clipboard)navigator.clipboard.writeText('hello@voss.studio').then(
+    ()=>toast('hello@voss.studio — copied to clipboard.'),
+    ()=>toast('Copy blocked — it\'s hello@voss.studio.'));
+  else toast('It\'s hello@voss.studio — old school.');
+});
+ $('#sponsorBtn').addEventListener('click',()=>toast('The sponsor page opens with the production deployment — this is the demo cut.'));
+ $('#archiveLink').addEventListener('click',e=>{e.preventDefault();toast('39 more builds + postmortems live in the public archive.');});
+ $$('[data-toast]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();toast(a.dataset.toast);}));
+ $('#runFeat').addEventListener('click',()=>{
+  $('#featWrap').scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(()=>{
+    if(!featSim)return;
+    active.add(featSim);
+    toast('Running the live '+LENS[lens].name+' simulation — '+LENS[lens].unit+'.');
+    setTimeout(()=>{if(!$('#featWrap').matches(':hover')){active.delete(featSim);drawPoster(featSim);}},5000);
+  },700);
+});
+
+/* clocks */
+function tick(){
+  $('#clock').textContent='AMS '+new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Amsterdam'}).format(new Date());
+}
+tick();setInterval(tick,20000);
+ $('#yr').textContent=new Date().getFullYear();
+
+/* sprocket holes */
+ $$('.holes').forEach(h=>{for(let i=0;i<26;i++)h.appendChild(document.createElement('i'));});
+
+/* ================= SCROLL: theme shifts + progress + nav ================= */
+const scenes=$$('[data-scene]'),pb=$('#progressBar'),nav=$('#nav'),navLinks=$$('#nav .links a');
+function onScroll(){
+  nav.classList.toggle('scrolled',scrollY>10);
+  const doc=document.documentElement;
+  pb.style.width=(scrollY/Math.max(1,doc.scrollHeight-innerHeight)*100)+'%';
+  const mid=scrollY+innerHeight*.5;
+  let th=document.body.dataset.theme,secId='';
+  for(const s of scenes){
+    const top=s.offsetTop,bot=top+s.offsetHeight;
+    if(mid>=top&&mid<bot){th=s.dataset.scene;secId=s.id;break;}
+  }
+  if(document.body.dataset.theme!==th){
+    document.body.dataset.theme=th;
+    ACC=getComputedStyle(document.body).getPropertyValue('--acc').trim();
+    sims.forEach(s=>{if(!active.has(s))drawPoster(s);});
+    renderStack();
+  }
+  navLinks.forEach(a=>a.classList.toggle('act',a.hash==='#'+secId));
+}
+window.addEventListener('scroll',onScroll,{passive:true});
+onScroll();
+
+/* reveal on scroll */
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target);}
+}),{threshold:.12});
+ $$('.rv').forEach(el=>{
+  if(el.dataset.d)el.style.transitionDelay=el.dataset.d+'ms';
+  io.observe(el);
+});
+</script>
+</body>
+</html>
